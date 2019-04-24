@@ -1,0 +1,93 @@
+# Service の定義
+apiVersion: v1
+kind: Service
+metadata:
+  # この Service の名前
+  name: webserver-service
+
+spec:
+  # type: ClusterIP
+  type: NodePort
+  # Label がこれらにマッチした Pod にアクセスを流す
+  selector:
+    app: rails
+    server: web
+  # ポートの指定
+  ports:
+    - name: http
+      protocol: TCP
+      # 受信するポート
+      port: 80
+      # 送信するポート
+      targetPort: http
+      # ローカルに公開するポート
+      nodePort: 30000
+
+---
+# Deployment の定義
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # この Deployment の名前
+  name: webserver-deployment
+  # この Deployment につけるラベル
+  labels:
+    app: rails
+
+# 管理する ReplicaSet の定義
+spec:
+  # 展開するレプリカ数
+  replicas: 1
+  # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
+  selector:
+    matchLabels:
+      app: rails
+      server: web
+
+  # 展開する Pod の定義
+  template:
+    metadata:
+      # この Pod につける Label
+      labels:
+        app: rails
+        server: web
+
+    spec:
+      volumes:
+        - name: sockets
+          emptyDir: {}
+
+      # Container の定義
+      containers:
+        - name: nginx
+          # イメージの指定
+          # image: localhost:5000/web
+          image: docker_web:latest
+          imagePullPolicy: Never
+          ports:
+            # Service から受けるポート
+            - name: http
+              containerPort: 8080
+          volumeMounts:
+            - mountPath: /sockets
+              name: sockets
+
+        - name: rails
+          # イメージの指定
+          # image: localhost:5000/app
+          image: docker_app:latest
+
+          imagePullPolicy: Never
+          env:
+            - name: DB_HOST
+              # Service にはドメインが割り振られる
+              value: dbserver-service.default.svc.cluster.local
+            - name: MYSQL_ROOT_PASSWORD
+              value: "password"
+            - name: MYSQL_USER
+              value: "sample_user"
+            - name: MYSQL_PASSWORD
+              value: "password"
+          volumeMounts:
+            - mountPath: /sockets
+              name: sockets

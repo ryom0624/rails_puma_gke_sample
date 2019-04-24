@@ -30,12 +30,14 @@ curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffo
 chmod +x skaffold
 sudo mv skaffold /usr/local/bin
 
-sudo mkdir -p $HOME/.kube
-sudo touch $HOME/.kube/config
+sudo mkdir -p /root/.kube
+sudo touch /root/.kube/config
 
-sudo echo {} > ~/.docker/config.json
+sudo mkdir /root/.docker
+sudo touch /root/.docker/config.json
+sudo echo {} > /root/.docker/config.json
 
-sudo cat >> .bashrc << EOF
+sudo cat >> /root/.bashrc << EOF
 export MINIKUBE_WANTUPDATENOTIFICATION=false
 export MINIKUBE_WANTREPORTERRORPROMPT=false
 export MINIKUBE_HOME=$HOME

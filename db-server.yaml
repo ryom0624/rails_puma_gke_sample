@@ -1,0 +1,50 @@
+apiVersion: v1
+kind: Service
+metadata:
+  # name で名前解決できる
+  name: dbserver-service
+
+spec:
+  # クラスタ上に公開
+  type: ClusterIP
+  selector:
+    # これにマッチした pod に流す
+    app: rails
+    server: db
+  ports:
+    - name: mysql
+      port: 3306
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dbserver-deployment
+  labels:
+    app: rails
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rails
+      server: db
+  template:
+    metadata:
+      labels:
+        app: rails
+        server: db
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.7
+          imagePullPolicy: IfNotPresent
+          env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: "password"
+          - name: MYSQL_USER
+            value: "sample_user"
+          - name: MYSQL_PASS
+            value: "password"
+          ports:
+            - containerPort: 3306
