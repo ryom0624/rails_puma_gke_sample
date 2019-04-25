@@ -29,7 +29,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   # この Deployment の名前
-  name: webserver-deployment
+  name: web
   # この Deployment につけるラベル
   labels:
     app: rails
@@ -37,11 +37,10 @@ metadata:
 # 管理する ReplicaSet の定義
 spec:
   # 展開するレプリカ数
-  replicas: 1
+  replicas: 5
   # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
   selector:
     matchLabels:
-      app: rails
       server: web
 
   # 展開する Pod の定義

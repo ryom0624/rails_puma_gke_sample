@@ -60,7 +60,8 @@ spec:
 
 `# kubectl exec -it [[pods name]] rails db:create`
 
-`# kubectl apply -f web-service.yaml`
+`# kubectl apply -f k8s/ --prune --all`
+
 
 `# kubectl get services`
 
@@ -81,14 +82,21 @@ If you want to use `gcloud`, put `gcloud init` on your console.
 ```
 
 ```
-$ kubectl exec -it [db_pod] -- mysql -uroot -ppassword
+
+# kubectl exec -it web_pod -c rails /bin/bash
+$ kubectl exec -it db -- mysql -uroot -ppassword
 
 CREATE USER sample_user IDENTIFIED BY 'password';
 GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%';
 FLUSH PRIVILEGES;
+# kubectl exec -it db -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%'; FLUSH PRIVILEGES;"
 
-$ kubectl exec -it [app_pod] -c rails rails db:create
-$ kubectl exec -it [app_pod] -c rails rails db:migrate
+# kubectl exec -it db -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password';"
+# kubectl exec -it db -- mysql -uroot -ppassword -e"GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%';"
+# kubectl exec -it db -- mysql -uroot -ppassword -e"FLUSH PRIVILEGES;"
+
+$ kubectl exec -it web -c rails rails db:create
+$ kubectl exec -it web -c rails rails db:migrate
 
 
 $ kubectl apply -f web-service.yaml
