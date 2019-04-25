@@ -10,6 +10,7 @@ services:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: sample_user
       MYSQL_PASSWORD: password
+    command: bundle exec puma -C config/puma.rb
     volumes:
       - .:/webapp
       - public-data:/webapp/public

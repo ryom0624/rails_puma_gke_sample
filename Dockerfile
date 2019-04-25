@@ -16,7 +16,7 @@ ADD Gemfile /webapp/Gemfile
 ADD Gemfile.lock /webapp/Gemfile.lock
 
 # bundle installの実行
-RUN bundle install --jobs=4
+RUN bundle install --jobs=2
 
 # ホストのアプリケーションディレクトリ内をすべてコンテナにコピー
 ADD . /webapp
@@ -25,4 +25,3 @@ ADD . /webapp
 RUN mkdir -p tmp/sockets
 RUN mkdir -p tmp/pids
 RUN rm -f /webapp/tmp/pids/server.pid
-ENTRYPOINT ["bundle", "exec", "puma", "-C", "config/puma.rb"]

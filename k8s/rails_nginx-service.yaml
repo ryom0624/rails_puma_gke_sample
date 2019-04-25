@@ -74,7 +74,7 @@ spec:
         - name: rails
           # イメージの指定
           # image: localhost:5000/app
-          image: docker_app:latest
+          image: docker_app:v0.4
 
           imagePullPolicy: Never
           env:
@@ -87,6 +87,13 @@ spec:
               value: "sample_user"
             - name: MYSQL_PASSWORD
               value: "password"
+          command:
+            - bundle
+          args:
+            - exec
+            - puma
+            - -C
+            - config/puma.rb
           volumeMounts:
             - mountPath: /sockets
               name: sockets

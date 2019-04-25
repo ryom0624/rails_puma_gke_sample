@@ -5,11 +5,41 @@
 
 `$ sudo su `
 
+## gcloud
+If you want to use `gcloud`, put `gcloud init` on your console.
+`$ gcloud auth configure-docker`
+
+## useful command
+exitedになったコンテナを削除
+`# docker container rm $(docker container ps -a -f status=exited -q)`
+
+railsで特定のファイルの変更
+`# docker image build -t docker_app:[new_tag] .`
+
+
+# local development for docker-compose
+
+```
+# docker-compose build
+
+# docker-compose up -d
+
+# docker-compose exec db  mysql -uroot -ppassword -e"GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%'; FLUSH PRIVILEGES;"
+
+# docker-compose exec app rails db:create
+# docker-compose exec app rails db:migrate
+```
+
+# local development for kubernetes(minikube)
 `# minikube start --vm-driver=none`
+
+```
+# sudo kubeadm reset -f && sudo /usr/bin/kubeadm init --config /var/lib/kubeadm.yaml --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests --ignore-preflight-errors=DirAvailable--data-minikube --ignore-preflight-errors=Port-10250 --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml --ignore-preflight-errors=Swap --ignore-preflight-errors=CRI
+```
 
 `# minikube detele`
 
-`# docker-compose build`
+## use kompose
 
 `# docker run -d -p 5000:5000 -v ~/.dockerregistry:/var/lib/docker/registry --restart always --name registry registry:2`
 
@@ -56,6 +86,7 @@ spec:
 `# kompose up`
 
 
+# use kubernetes
 `# kubectl get deployment,svc,pods,pvc`
 
 `# kubectl exec -it [[pods name]] rails db:create`
@@ -67,19 +98,6 @@ spec:
 
 `# minikube service list`
 
-# Extra
-
-## gcloud
-If you want to use `gcloud`, put `gcloud init` on your console.
-`$ gcloud auth configure-docker`
-
-## useful command
-`# docker rm $(docker ps -a -f status=exited -q)`
-
-## if minikube show this error
-```
-# sudo kubeadm reset -f && sudo /usr/bin/kubeadm init --config /var/lib/kubeadm.yaml --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests --ignore-preflight-errors=DirAvailable--data-minikube --ignore-preflight-errors=Port-10250 --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml --ignore-preflight-errors=Swap --ignore-preflight-errors=CRI
-```
 
 ```
 
@@ -104,4 +122,9 @@ $ minikube service list
 
 $ kubectl delete pods [podname] --grace-period=0 --force
 ```
+
+deploymentを変更
+
+`# kubectl apply -f k8s/`
+
 
