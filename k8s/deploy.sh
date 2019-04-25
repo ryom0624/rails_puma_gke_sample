@@ -9,5 +9,5 @@ do
 done
 gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
 gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-kubectl apply -f generated-deployment.yml --record
-kubectl apply -f generated-service.yml
+kubectl apply -f generated-web.yml --record
+kubectl apply -f generated-db.yml --record
