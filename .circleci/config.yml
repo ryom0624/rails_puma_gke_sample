@@ -45,7 +45,7 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build -f k8s/sample --cache-from=asia.gcr.io/${PROJECT_NAME}/sample:latest -t asia.gcr.io/${PROJECT_NAME}/sample:$CIRCLE_SHA1 .
+            docker build -f k8s/sample/ --cache-from=asia.gcr.io/${PROJECT_NAME}/sample:latest -t asia.gcr.io/${PROJECT_NAME}/sample:$CIRCLE_SHA1 .
             docker tag asia.gcr.io/${PROJECT_NAME}/sample:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/sample:latest
       - run:
           name: Save Docker image layer cache
