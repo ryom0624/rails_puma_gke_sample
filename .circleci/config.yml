@@ -21,10 +21,10 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            apk add --no-cache 
-              py-pip=9.0.0-r1 
+            apk add --no-cache \
+              py-pip=9.0.0-r1 \
               gettext
-            pip install 
+            pip install \
               docker-compose==1.12.0
             gcloud components install kubectl
       - run:
