@@ -15,7 +15,7 @@ spec:
       containers:
         - name: deploy-tasks-runner
           image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-          command: ["/app/script/deploy-tasks.sh"]
+          command: ./deploy-tasks.sh
           env:
             - name: RAILS_ENV
               value: "development"
