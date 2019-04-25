@@ -1,0 +1,21 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: deploy-tasks
+spec:
+  template:
+    metadata:
+      name: deploy-tasks
+      labels:
+        name: deploy-tasks
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: default-pool
+      restartPolicy: Never
+      containers:
+        - name: deploy-tasks-runner
+          image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
+          command: ["/app/script/deploy-tasks.sh"]
+          env:
+            - name: RAILS_ENV
+              value: "development"

@@ -54,7 +54,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            docker-compose run --rm sample
+            docker-compose up -d
       - deploy:
           name: Deploy application Docker image
           command: |
