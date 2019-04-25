@@ -9,6 +9,14 @@
 If you want to use `gcloud`, put `gcloud init` on your console.
 `$ gcloud auth configure-docker`
 
+`$ gcloud auth login`
+
+`$ docker tag [IMAGE] asia.gcr.io/[PROJECT_ID]/[IMAGE]`
+`$ docker tag docker_app:latest asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web:v0.1`
+`$ docker push asia.gcr.io/[PROJECT_ID]/[IMAGE]`
+`$ docker push asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web`
+
+
 ## useful command
 exitedになったコンテナを削除
 `# docker container rm $(docker container ps -a -f status=exited -q)`
