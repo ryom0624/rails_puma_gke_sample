@@ -11,5 +11,5 @@ gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CI
 gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
 pwd
 ls
-kubectl apply -f generated-web.yml --record
-kubectl apply -f generated-db.yml --record
+kubectl apply -f generated-web.yaml --record
+kubectl apply -f generated-db.yaml --record
