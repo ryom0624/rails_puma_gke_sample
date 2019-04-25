@@ -7,7 +7,7 @@ metadata:
 
 spec:
   # type: ClusterIP
-  type: NodePort
+  type: LoadBalancer
   # Label がこれらにマッチした Pod にアクセスを流す
   selector:
     app: rails
@@ -61,7 +61,7 @@ spec:
         - name: nginx
           # イメージの指定
           # image: localhost:5000/web
-          image: docker_web:latest
+          image: asia.gcr.io/${PROJECT_NAME}/rails_puma_gke_sample/web:${CIRCLE_SHA1}
           imagePullPolicy: Never
           ports:
             # Service から受けるポート
@@ -74,7 +74,7 @@ spec:
         - name: rails
           # イメージの指定
           # image: localhost:5000/app
-          image: docker_app:v0.4
+          image: asia.gcr.io/${PROJECT_NAME}/rails_puma_gke_sample/app:${CIRCLE_SHA1}
 
           imagePullPolicy: Never
           env:
