@@ -5,9 +5,9 @@ set -e
 
 for f in k8s/*.yaml
 do
-	envsubst < $f > "generated-$(basename $f)"
+	envsubst < $f > "k8s/generated-$(basename $f)"
 done
 gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
 gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-kubectl apply -f generated-web.yml --record
-kubectl apply -f generated-db.yml --record
+kubectl apply -f k8s/generated-web.yml --record
+kubectl apply -f k8s/generated-db.yml --record
