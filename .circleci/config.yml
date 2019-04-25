@@ -9,7 +9,7 @@ jobs:
       DEBIAN_FRONTEND: noninteractive
       GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/account-auth.json
     docker:
-      - image: google/cloud-sdk:171.0.0-alpine
+      - image: google/cloud-sdk:243.0.0-alpine
     steps:
       - checkout
       - setup_remote_docker
@@ -23,18 +23,19 @@ jobs:
           command: |
             apk add --no-cache \
               py-pip=9.0.0-r1 \
-              gettext
+              gettext \
+              docker
             pip install \
               docker-compose==1.12.0
-            gcloud components install kubectl
-      - run:
-          name: Install Docker client
-          command: |
-            set -x
-            VER="18.09.5-ce"
-            curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
-            tar -xz -C /tmp -f /tmp/docker-$VER.tgz
-            mv /tmp/docker/* /usr/bin
+            gcloud components install kubectl -y
+      # - run:
+      #     name: Install Docker client
+      #     command: |
+      #       set -x
+      #       VER="18.09.5-ce"
+      #       curl -L -o /tmp/docker-$VER.tgz https://get.docker.com/builds/Linux/x86_64/docker-$VER.tgz
+      #       tar -xz -C /tmp -f /tmp/docker-$VER.tgz
+      #       mv /tmp/docker/* /usr/bin
       - run:
           name: Check docker version
           command: |
