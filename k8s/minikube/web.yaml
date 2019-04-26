@@ -7,7 +7,8 @@ metadata:
 
 spec:
   # type: ClusterIP
-  type: LoadBalancer
+  type: NodePort
+  # type: LoadBalancer
   # Label がこれらにマッチした Pod にアクセスを流す
   selector:
     app: rails
@@ -16,11 +17,11 @@ spec:
   ports:
     - name: http
       protocol: TCP
-      # 受信するポート
+      # ClusterIPが受信するポート
       port: 80
       # 送信するポート
       targetPort: http
-      # ローカルに公開するポート
+      # ローカルに公開するポート(30000~)  
       nodePort: 30000
 
 ---
@@ -37,12 +38,16 @@ metadata:
 # 管理する ReplicaSet の定義
 spec:
   # 展開するレプリカ数
-  replicas: 5
+  replicas: 3
+  # strategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 25%
   # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
   selector:
     matchLabels:
       server: web
-
   # 展開する Pod の定義
   template:
     metadata:
@@ -56,37 +61,24 @@ spec:
         - name: sockets
           emptyDir: {}
 
-      # Container の定義
       containers:
         - name: nginx
-          # イメージの指定
-          # image: localhost:5000/web
-          image: asia.gcr.io/${PROJECT_NAME}/rails_puma_gke_sample/web:${CIRCLE_SHA1}
+          image: rails_puma_web:latest
           imagePullPolicy: Never
           ports:
             # Service から受けるポート
             - name: http
               containerPort: 8080
           volumeMounts:
-            - mountPath: /sockets
+            - mountPath: /webapp/tmp/sockets
               name: sockets
 
         - name: rails
-          # イメージの指定
-          # image: localhost:5000/app
-          image: asia.gcr.io/${PROJECT_NAME}/rails_puma_gke_sample/app:${CIRCLE_SHA1}
-
+          image: rails_puma_app:latest
           imagePullPolicy: Never
-          env:
-            - name: DB_HOST
-              # Service にはドメインが割り振られる
-              value: dbserver-service.default.svc.cluster.local
-            - name: MYSQL_ROOT_PASSWORD
-              value: "password"
-            - name: MYSQL_USER
-              value: "sample_user"
-            - name: MYSQL_PASSWORD
-              value: "password"
+          envFrom:
+            - configMapRef:
+                name: config
           command:
             - bundle
           args:
@@ -94,6 +86,27 @@ spec:
             - puma
             - -C
             - config/puma.rb
+
           volumeMounts:
-            - mountPath: /sockets
+            - mountPath: /webapp/tmp/sockets
               name: sockets
+
+          # readinessProbe:
+          #   httpGet:
+          #     path: / 
+          #     port: 8080 
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 5 
+          #   successThreshold: 1
+          # env:
+          #   - name: DB_HOST
+          #     # Service にはドメインが割り振られる
+          #     value: dbserver-service.default.svc.cluster.local
+          #   - name: MYSQL_ROOT_PASSWORD
+          #     value: "password"
+          #   - name: MYSQL_USER
+          #     value: "sample_user"
+          #   - name: MYSQL_PASSWORD
+          #     value: "password"
+
+

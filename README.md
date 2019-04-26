@@ -1,32 +1,28 @@
-# Common
-`$ vagrant up --provision`
-
-`$ vagrant ssh`
-
-`$ sudo su `
-
-## gcloud
-If you want to use `gcloud`, put `gcloud init` on your console.
-`$ gcloud auth configure-docker`
-
-`$ gcloud auth login`
-
-`$ docker tag [IMAGE] asia.gcr.io/[PROJECT_ID]/[IMAGE]`
-`$ docker tag docker_app:latest asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web:v0.1`
-`$ docker push asia.gcr.io/[PROJECT_ID]/[IMAGE]`
-`$ docker push asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web`
+# Set up
 
 
-## useful command
-exitedになったコンテナを削除
-`# docker container rm $(docker container ps -a -f status=exited -q)`
+## Common
+```
+$ vagrant up --provision
+$ vagrant ssh
+$ sudo su
+```
 
-railsで特定のファイルの変更
-`# docker image build -t docker_app:[new_tag] .`
+## kubernetes(minikube)
 
+```
+# minikube start --vm-driver=none
 
-# local development for docker-compose
+# docker build -t rails_puma_web:latest containers/nginx/
+# docker build -t rails_puma_app:latest .
 
+# kubectl exec -it db -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%'; FLUSH PRIVILEGES;"
+
+# kubectl exec -it web -c rails rails db:create
+# kubectl exec -it web -c rails rails db:migrate
+```
+
+## docker-compose
 ```
 # docker-compose build
 
@@ -38,14 +34,49 @@ railsで特定のファイルの変更
 # docker-compose exec app rails db:migrate
 ```
 
-# local development for kubernetes(minikube)
-`# minikube start --vm-driver=none`
 
+# commands
+
+## gcloud
+If you want to use `gcloud`, put `gcloud init` on your console.
 ```
-# sudo kubeadm reset -f && sudo /usr/bin/kubeadm init --config /var/lib/kubeadm.yaml --ignore-preflight-errors=DirAvailable--etc-kubernetes-manifests --ignore-preflight-errors=DirAvailable--data-minikube --ignore-preflight-errors=Port-10250 --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-scheduler.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-apiserver.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-kube-controller-manager.yaml --ignore-preflight-errors=FileAvailable--etc-kubernetes-manifests-etcd.yaml --ignore-preflight-errors=Swap --ignore-preflight-errors=CRI
+# gcloud auth configure-docker
+# gcloud auth login
+# docker tag [IMAGE] asia.gcr.io/[PROJECT_ID]/[IMAGE]
+# docker tag docker_app:latest asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web:v0.1
+# docker push asia.gcr.io/[PROJECT_ID]/[IMAGE]
+# docker push asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web
 ```
 
-`# minikube detele`
+## useful command
+exitedになったコンテナを削除
+`# docker container rm $(docker container ps -a -f status=exited -q)`
+
+railsで特定のファイルの変更
+`# docker image build -t [IMAGE_NAME]:[new_tag] .`
+
+
+### kubernetes
+```
+# kubectl apply -f k8s/ --prune --all
+# kubectl get deployment,svc,pods,pvc
+# kubectl get services
+# minikube service list
+
+// podのログ
+# stern "web-\w"
+
+// 複数コンテナ
+# kubectl exec -it web_pod -c rails /bin/bash
+
+// 引数のあるexec
+# kubectl exec -it db -- mysql -uroot -ppassword
+
+// 強制削除
+# kubectl delete pods [podname] --grace-period=0 --force
+```
+
+
 
 ## use kompose
 
@@ -92,47 +123,3 @@ spec:
 ```
 
 `# kompose up`
-
-
-# use kubernetes
-`# kubectl get deployment,svc,pods,pvc`
-
-`# kubectl exec -it [[pods name]] rails db:create`
-
-`# kubectl apply -f k8s/ --prune --all`
-
-
-`# kubectl get services`
-
-`# minikube service list`
-
-
-```
-
-# kubectl exec -it web_pod -c rails /bin/bash
-$ kubectl exec -it db -- mysql -uroot -ppassword
-
-CREATE USER sample_user IDENTIFIED BY 'password';
-GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%';
-FLUSH PRIVILEGES;
-# kubectl exec -it db -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%'; FLUSH PRIVILEGES;"
-
-# kubectl exec -it db -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password';"
-# kubectl exec -it db -- mysql -uroot -ppassword -e"GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%';"
-# kubectl exec -it db -- mysql -uroot -ppassword -e"FLUSH PRIVILEGES;"
-
-$ kubectl exec -it web -c rails rails db:create
-$ kubectl exec -it web -c rails rails db:migrate
-
-
-$ kubectl apply -f web-service.yaml
-$ minikube service list
-
-$ kubectl delete pods [podname] --grace-period=0 --force
-```
-
-deploymentを変更
-
-`# kubectl apply -f k8s/`
-
-

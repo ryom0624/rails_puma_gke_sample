@@ -5,11 +5,12 @@ services:
       context: .
     ports:
       - 3000:3000
-    # image: localhost:5000/docker_app:v1
+    image: rails_puma_app:latest
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: sample_user
       MYSQL_PASSWORD: password
+      DB_HOST: db
     command: bundle exec puma -C config/puma.rb
     volumes:
       - .:/webapp
@@ -29,7 +30,7 @@ services:
     volumes:
       - db-data:/var/lib/mysql
   web:
-    # image: localhost:5000/docker_web:v1
+    image: rails_puma_web:latest
     build:
       context: containers/nginx
     volumes:

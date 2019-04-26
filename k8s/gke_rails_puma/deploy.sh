@@ -3,7 +3,7 @@
 # Exit on any error
 set -e
 
-for f in k8s/*.yaml
+for f in ${MANIFESTS_DIR}/*.yaml
 do
 	envsubst < $f > "generated-$(basename $f)"
 done

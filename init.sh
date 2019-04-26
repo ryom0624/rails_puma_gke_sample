@@ -13,6 +13,8 @@ EOM
 
 sudo yum install google-cloud-sdk -y
 
+sudo curl -L https://github.com/wercker/stern/releases/download/1.10.0/stern_linux_amd64 -o /usr/local/bin/stern
+sudo chmod +x /usr/local/bin/stern
 
 sudo curl -L "https://github.com/docker/compose/releases/download/1.24.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 sudo chmod +x /usr/local/bin/docker-compose
@@ -43,8 +45,12 @@ export MINIKUBE_WANTREPORTERRORPROMPT=false
 export MINIKUBE_HOME=$HOME
 export CHANGE_MINIKUBE_NONE_USER=true
 export KUBECONFIG=$HOME/.kube/config
+alias k=kubectl
+alias dcls="docker container ls -a"
+alias dils="docker image ls"
+complete -o default -F __start_kubectl k
+source <(kubectl completion bash)
 EOF
-sudo source <(kubectl completion bash)
 
 # docker container run --rm -d -it --name nginx -v /home/docker/html:/usr/share/nginx/html -p 8080:80 nginx:latest
 # docker run -d -p 5000:5000 -v ~/.dockerregistry:/var/lib/docker/registry --restart always --name registry registry:2
