@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup
+spec:
+  template:
+    metadata:
+      name: setup
+    spec:
+      containers:
+      - name: setup
+        image: localhost:5000/rails_puma_app:latest
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "bundle exec rails db:create && bundle exec rails db:migrate"]
+        envFrom:
+        - configMapRef:
+            name: config
+      restartPolicy: Never

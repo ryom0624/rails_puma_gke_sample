@@ -98,15 +98,6 @@ spec:
           #   initialDelaySeconds: 5
           #   periodSeconds: 5 
           #   successThreshold: 1
-          # env:
-          #   - name: DB_HOST
-          #     # Service にはドメインが割り振られる
-          #     value: dbserver-service.default.svc.cluster.local
-          #   - name: MYSQL_ROOT_PASSWORD
-          #     value: "password"
-          #   - name: MYSQL_USER
-          #     value: "sample_user"
-          #   - name: MYSQL_PASSWORD
-          #     value: "password"
+
 
 
