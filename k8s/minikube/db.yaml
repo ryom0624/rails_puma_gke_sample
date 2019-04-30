@@ -43,6 +43,9 @@ spec:
         - name: mysql
           image: mysql:5.7
           imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: Asia/Tokyo
           envFrom:
             - configMapRef:
                 name: config

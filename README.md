@@ -65,6 +65,10 @@ railsで特定のファイルの変更
 # kubectl get services
 # minikube service list
 
+// minikubeのtype:LoadBalancerを使ったときのIPの確認
+# minikube service sample-lb --url
+http://10.0.2.15:30080
+
 // podのログ
 # stern "web-\w"
 
@@ -76,6 +80,9 @@ railsで特定のファイルの変更
 
 // 強制削除
 # kubectl delete pods [podname] --grace-period=0 --force
+
+// sample_guide
+#  for PODNAME in `kubectl get pods -l app=sample-app -o jsonpath='{.items[*].metadata.name}'`; do kubectl  exec -it ${PODNAME} -- cp /etc/hostname /usr/share/nginx/html/index.html; done
 ```
 
 

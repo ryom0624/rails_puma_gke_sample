@@ -40,17 +40,33 @@ sudo touch /root/.docker/config.json
 sudo echo {} > /root/.docker/config.json
 
 sudo cat >> /root/.bashrc << EOF
-export MINIKUBE_WANTUPDATENOTIFICATION=false
-export MINIKUBE_WANTREPORTERRORPROMPT=false
-export MINIKUBE_HOME=$HOME
-export CHANGE_MINIKUBE_NONE_USER=true
-export KUBECONFIG=$HOME/.kube/config
 alias k=kubectl
 alias dcls="docker container ls -a"
 alias dils="docker image ls"
 complete -o default -F __start_kubectl k
 source <(kubectl completion bash)
 EOF
+
+sudo cat > /root/.bash_profile << EOF
+# .bash_profile
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+# User specific environment and startup programs
+export MINIKUBE_WANTUPDATENOTIFICATION=false
+export MINIKUBE_WANTREPORTERRORPROMPT=false
+export MINIKUBE_HOME=$HOME
+export CHANGE_MINIKUBE_NONE_USER=true
+export KUBECONFIG=$HOME/.kube/config
+
+PATH=$PATH:$HOME/bin:/usr/local/bin
+
+export PATH
+EOF
+
 
 # docker container run --rm -d -it --name nginx -v /home/docker/html:/usr/share/nginx/html -p 8080:80 nginx:latest
 # docker run -d -p 5000:5000 -v ~/.dockerregistry:/var/lib/docker/registry --restart always --name registry registry:2

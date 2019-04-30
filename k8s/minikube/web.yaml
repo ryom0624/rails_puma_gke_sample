@@ -20,8 +20,8 @@ spec:
       # ClusterIPが受信するポート
       port: 80
       # 送信するポート
-      targetPort: http
-      # ローカルに公開するポート(30000~)  
+      targetPort: target
+      # ローカルに公開するポート(30000~)
       nodePort: 30000
 
 ---
@@ -67,7 +67,7 @@ spec:
           imagePullPolicy: Never
           ports:
             # Service から受けるポート
-            - name: http
+            - name: target
               containerPort: 8080
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
@@ -76,6 +76,9 @@ spec:
         - name: rails
           image: rails_puma_app:latest
           imagePullPolicy: Never
+          env:
+            - name: TZ
+              value: Asia/Tokyo
           envFrom:
             - configMapRef:
                 name: config
@@ -93,11 +96,8 @@ spec:
 
           # readinessProbe:
           #   httpGet:
-          #     path: / 
-          #     port: 8080 
+          #     path: /
+          #     port: 8080
           #   initialDelaySeconds: 5
-          #   periodSeconds: 5 
+          #   periodSeconds: 5
           #   successThreshold: 1
-
-
-
