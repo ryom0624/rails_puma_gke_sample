@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-lb
+spec:
+  type: LoadBalancer
+  ports:
+    - name: "http-port"
+      protocol: "TCP"
+      port: 8080
+      targetPort: 80
+      nodePort: 30080
+  selector:
+    app: sample-app
+
+# 別pod立ち上げて
+# k run --image=centos:7 --restart=Never --rm -i testpod -- curl -s http://sample-lb:8080
+# k run --image=centos:7 --restart=Never --rm -i testpod -- curl -s http://10.101.229.210:8080
+# VMから
+# curl http://10.0.2.15:30080
+# ローカルから
+# curl 192.168.33.10:30080

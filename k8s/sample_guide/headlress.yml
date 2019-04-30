@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: sample-headless
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+    - name: "http-port"
+      protocol: "TCP"
+      port: 80
+      targetPort: 80
+  selector:
+    app: sample-app
+
+# k run --image=centos:7 --restart=Never --rm -i testpod -- curl -s http://sample-headless:80
+# 個々のpod名を返すにはstatefulsetが必要
