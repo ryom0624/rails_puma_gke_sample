@@ -87,6 +87,11 @@ http://10.0.2.15:30080
 
 // sample_guide
 #  for PODNAME in `kubectl get pods -l app=sample-app -o jsonpath='{.items[*].metadata.name}'`; do kubectl  exec -it ${PODNAME} -- cp /etc/hostname /usr/share/nginx/html/index.html; done
+
+
+// ingress debuging
+# kubectl get pods -n kube-system | grep nginx-ingress-controller
+# kubectl describe pods -n kube-system nginx-ingress-controller-...
 ```
 
 
