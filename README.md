@@ -22,6 +22,10 @@ $ sudo su
 
 # kubectl exec -it web -c rails rails db:create
 # kubectl exec -it web -c rails rails db:migrate
+
+# kubectl rollout status statefulset web
+# kubectl rollout history statefulset web
+# kubectl rollout undo statefulset web
 ```
 
 ## docker-compose

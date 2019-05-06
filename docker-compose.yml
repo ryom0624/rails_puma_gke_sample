@@ -5,7 +5,7 @@ services:
       context: .
     ports:
       - 3000:3000
-    image: rails_puma_app:latest
+    image: rails_puma_app:v0.1
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: sample_user
