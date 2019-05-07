@@ -26,11 +26,11 @@ RUN mkdir -p tmp/sockets
 RUN mkdir -p tmp/pids
 RUN rm -f /webapp/tmp/pids/server.pid
 
-RUN touch /webapp/log/development.log
-RUN ln -sf /dev/stdout /webapp/log/development.log
 RUN mkdir /webapp/log
+RUN touch /webapp/log/development.log
 RUN touch /webapp/log/puma.stdout.log
 RUN touch /webapp/log/puma.stderr.log
+RUN ln -sf /dev/stdout /webapp/log/development.log
 RUN ln -sf /dev/stdout /webapp/log/puma.stdout.log
 RUN ln -sf /dev/stderr /webapp/log/puma.stderr.log
 # RUN bundle exec rails assets:precompile
