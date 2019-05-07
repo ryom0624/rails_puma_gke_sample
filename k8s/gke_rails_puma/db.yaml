@@ -38,10 +38,10 @@ spec:
         - name: mysql-persistent-storage
           persistentVolumeClaim:
             claimName: mysql-pv-claim
-      # securityContext:
-      #   fsGroup: 2000
-      #   runAsNonRoot: true
-      #   runAsUser: 1000
+      securityContext:
+        fsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 1000
 
       containers:
         - name: mysql
