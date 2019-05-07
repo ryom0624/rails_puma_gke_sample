@@ -67,6 +67,6 @@ jobs:
               gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
               gcloud --quiet container clusters get-credentials $CLUSTER_NAME
               gcloud config set container/use_client_certificate True
-              ls -la  ${MANIFESTS_DIR}
-              # ${MANIFESTS_DIR}/deploy.sh
+              chmod + x ${MANIFESTS_DIR}/deploy.sh
+              ${MANIFESTS_DIR}/deploy.sh
             fi
