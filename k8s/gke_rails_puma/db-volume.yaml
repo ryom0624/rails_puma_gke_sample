@@ -13,6 +13,8 @@ spec:
   gcePersistentDisk:
     pdName: my-data-disk
     fsType: ext4
+  storageClassName: "sample-storageclass"
+  
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
@@ -27,3 +29,4 @@ spec:
   resources:
     requests:
       storage: 10Gi
+  storageClassName: "sample-storageclass"
