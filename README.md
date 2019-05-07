@@ -28,6 +28,13 @@ $ sudo su
 # kubectl rollout undo statefulset web
 ```
 
+# deploy
+```
+// GCP上で先に作っておく。
+$ gcloud beta compute disks create --size=10GB my-data-disk --zone asia-northeast1-a
+```
+
+
 ## docker-compose
 ```
 # docker-compose build

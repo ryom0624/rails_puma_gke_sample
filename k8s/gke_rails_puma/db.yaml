@@ -36,11 +36,12 @@ spec:
     spec:
       volumes:
         - name: mysql-persistent-storage
-          gcePersistentDisk:
-            pdName: my-data-disk
-            fsType: ext4
-          # persistentVolumeClaim:
-          #   claimName: mysql-pv-claim
+          persistentVolumeClaim:
+            claimName: mysql-pv-claim
+      # securityContext:
+      #   fsGroup: 2000
+      #   runAsNonRoot: true
+      #   runAsUser: 1000
 
       containers:
         - name: mysql
