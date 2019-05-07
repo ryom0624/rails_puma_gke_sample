@@ -15,6 +15,6 @@ gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CI
 # kubectl apply -f generated-db.yaml --record
 for f in ${MANIFESTS_DIR}/*.yaml
 do
-  kubectl apply -f "generated-$(basename $f)".yaml --record
+  kubectl apply -f "generated-$(basename $f)" --record
 done
 
