@@ -26,6 +26,7 @@ RUN mkdir -p tmp/sockets
 RUN mkdir -p tmp/pids
 RUN rm -f /webapp/tmp/pids/server.pid
 
+RUN touch /webapp/log/development.log
 RUN ln -sf /dev/stdout /webapp/log/development.log
 RUN mkdir /webapp/log
 RUN touch /webapp/log/puma.stdout.log
