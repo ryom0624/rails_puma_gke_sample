@@ -41,8 +41,9 @@ sudo echo {} > /root/.docker/config.json
 
 sudo cat >> /root/.bashrc << EOF
 alias k=kubectl
-alias dcls="docker container ls -a"
 alias dils="docker image ls"
+alias dcls="docker container ls -a --format \"table {{.ID}}\t{{.Names}}\t{{.Status}}\""
+alias dcrm="docker container rm $(docker container ps -a -f status=exited -q)"
 complete -o default -F __start_kubectl k
 source <(kubectl completion bash)
 EOF

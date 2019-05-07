@@ -43,11 +43,17 @@ $ sudo su
 
 # commands
 
+## docker
+```
+# docker container ls -a --format "table {{.ID}}\t{{.Names}}\t{{.Status}}"
+```
+
 ## gcloud
 If you want to use `gcloud`, put `gcloud init` on your console.
 ```
 # gcloud auth configure-docker
 # gcloud auth login
+# gcloud config set project testing-190408-237002
 # docker tag [IMAGE] asia.gcr.io/[PROJECT_ID]/[IMAGE]
 # docker tag docker_app:latest asia.gcr.io/testing-190408-237002/rails_puma_gke_sample_web:v0.1
 # docker push asia.gcr.io/[PROJECT_ID]/[IMAGE]
@@ -92,6 +98,7 @@ http://10.0.2.15:30080
 // ingress debuging
 # kubectl get pods -n kube-system | grep nginx-ingress-controller
 # kubectl describe pods -n kube-system nginx-ingress-controller-...
+# kubectl describe pods -n kube-system $(kubectl get pods -n kube-system -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep nginx-ingress-controller)
 ```
 
 
