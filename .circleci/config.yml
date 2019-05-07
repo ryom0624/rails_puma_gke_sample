@@ -7,7 +7,7 @@ jobs:
       CLUSTER_NAME: rails-puma-gke-sample
       CLOUD_REGISTRY_NAME: rails_puma_gke_sample
       CLOUDSDK_COMPUTE_ZONE: asia-northeast1-a
-      MANIFESTS_DIR: ./k8s/minikube
+      MANIFESTS_DIR: ./k8s/gke_rails_puma
       DEBIAN_FRONTEND: noninteractive
       GOOGLE_APPLICATION_CREDENTIALS: ${HOME}/account-auth.json
     docker:

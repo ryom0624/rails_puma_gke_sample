@@ -1,21 +1,19 @@
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: deploy-tasks
+  name: setup
 spec:
   template:
     metadata:
-      name: deploy-tasks
-      labels:
-        name: deploy-tasks
+      name: setup
     spec:
-      nodeSelector:
-        cloud.google.com/gke-nodepool: default-pool
-      restartPolicy: Never
       containers:
-        - name: deploy-tasks-runner
-          image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-          command: ./deploy-tasks.sh
-          env:
-            - name: RAILS_ENV
-              value: "development"
+      - name: setup
+        image: asia.gcr.io/${PROJECT_NAME}/rails_puma_gke_sample/app:${CIRCLE_SHA1}
+        imagePullPolicy: Never
+        command: ["/bin/sh"]
+        args: ["-c", "bundle exec rails db:create && bundle exec rails db:migrate"]
+        envFrom:
+        - configMapRef:
+            name: config
+      restartPolicy: Never
