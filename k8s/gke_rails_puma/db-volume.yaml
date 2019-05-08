@@ -12,17 +12,22 @@ spec:
   gcePersistentDisk:
     pdName: my-data-disk
     fsType: ext4
-  storageClassName: "sample-storageclass"
+  # storageClassName: "sample-storageclass"
   
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
   name: mysql-pv-claim
+  labels:
+    type: gke-volume
 spec:
+  selector:
+    matchLabels:
+      type: gke-volume
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 10Gi
-  storageClassName: "sample-storageclass"
+  storageClassName: ""
