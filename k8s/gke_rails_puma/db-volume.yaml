@@ -4,7 +4,6 @@ metadata:
   name: mysql-pv-volume
   labels:
     type: gke-volume
-    failure-domain.beta.kubernetes.io/zone: asia-northeast1-a
 spec:
   capacity:
     storage: 10Gi
@@ -21,9 +20,6 @@ kind: PersistentVolumeClaim
 metadata:
   name: mysql-pv-claim
 spec:
-  selector:
-    matchLabels:
-      type: gke-volume
   accessModes:
     - ReadWriteOnce
   resources:
