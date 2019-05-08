@@ -9,6 +9,8 @@ spec:
     storage: 10Gi
   accessModes:
     - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Delete
+  storageClassName: manual
   gcePersistentDisk:
     pdName: my-data-disk
     fsType: ext4
