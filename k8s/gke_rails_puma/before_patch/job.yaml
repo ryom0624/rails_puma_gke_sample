@@ -10,7 +10,7 @@ spec:
       containers:
       - name: setup
         image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-        imagePullPolicy: Never
+        imagePullPolicy: Always
         command: ["/bin/sh"]
         args: ["-c", "bundle exec rails db:create && bundle exec rails db:migrate"]
         envFrom:
