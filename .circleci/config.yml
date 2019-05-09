@@ -18,9 +18,7 @@ jobs:
       - run:
           name: debug
           command: |
-            ls -la ${MANIFESTS_DIR}/before_patch
-            cd ${MANIFESTS_DIR}/before_patch
-            
+            cat ${MANIFESTS_DIR}/before_patch/web.yaml
             envsubst < ${MANIFESTS_DIR}/before_patch/web.yaml > ${MANIFESTS_DIR}/after_patched_web.yaml
             envsubst < ${MANIFESTS_DIR}/before_patch/job.yaml > ${MANIFESTS_DIR}/after_patched_job.yaml
             cat ${MANIFESTS_DIR}/after_patched_web.yaml
