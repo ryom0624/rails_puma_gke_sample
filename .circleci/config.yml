@@ -21,9 +21,9 @@ jobs:
             ls -la ${MANIFESTS_DIR}
             cd ${MANIFESTS_DIR}/before_patch
             
-            envsubst < ${MANIFESTS_DIR}/before_patch/web.yml > ${MANIFESTS_DIR}/after_patched_web.yml
-            envsubst < ${MANIFESTS_DIR}/before_patch/job.yml > ${MANIFESTS_DIR}/after_patched_job.yml
-            cat ${MANIFESTS_DIR}/after_patched_web.yml
+            envsubst < ${MANIFESTS_DIR}/before_patch/web.yaml > ${MANIFESTS_DIR}/after_patched_web.yaml
+            envsubst < ${MANIFESTS_DIR}/before_patch/job.yaml > ${MANIFESTS_DIR}/after_patched_job.yaml
+            cat ${MANIFESTS_DIR}/after_patched_web.yaml
 
       # - restore_cache:
       #     keys:
