@@ -16,7 +16,7 @@ jobs:
       - checkout
       - setup_remote_docker
       - run:
-        name: debug:
+        name: debug
           command: |
             ls -la ${MANIFESTS_DIR}
             cd ${MANIFESTS_DIR}/before_patch
