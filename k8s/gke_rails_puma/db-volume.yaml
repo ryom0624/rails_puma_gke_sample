@@ -10,11 +10,10 @@ spec:
   accessModes:
     - ReadWriteOnce
   persistentVolumeReclaimPolicy: Delete
-  storageClassName: manual
   gcePersistentDisk:
     pdName: my-data-disk
     fsType: ext4
-  # storageClassName: "sample-storageclass"
+  storageClassName: standard
   
 ---
 apiVersion: v1
@@ -32,4 +31,4 @@ spec:
   resources:
     requests:
       storage: 10Gi
-  storageClassName: ""
+  storageClassName: standard
