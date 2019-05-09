@@ -23,10 +23,7 @@ jobs:
       - run:
           name: Install dependencies
           command: |
-            echo "hello"
-            pwd
-            ls -la
-            tree
+            ls -la k8s/gke_rails_puma
       #       apt-get install -qq -y gettext
       #       # curl -L "https://github.com/docker/compose/releases/download/1.12.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
       #       # chmod +x /usr/local/bin/docker-compose
