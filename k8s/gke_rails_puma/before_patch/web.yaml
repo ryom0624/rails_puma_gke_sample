@@ -86,7 +86,7 @@ spec:
         - name: nginx
           # image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/web:latest
           image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
-          imagePullPolicy: ifNotPresent
+          imagePullPolicy: IfNotPresent
           ports:
             # Service から受けるポート
             - name: target
@@ -97,7 +97,7 @@ spec:
 
         - name: rails
           image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-          imagePullPolicy: ifNotPresent
+          imagePullPolicy: IfNotPresent
           env:
             - name: TZ
               value: Asia/Tokyo
