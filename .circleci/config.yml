@@ -70,6 +70,12 @@ jobs:
               gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
               gcloud --quiet container clusters get-credentials $CLUSTER_NAME
               gcloud config set container/use_client_certificate True
-              chmod +x ${MANIFESTS_DIR}/deploy.sh
-              ${MANIFESTS_DIR}/deploy.sh
+              gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
+              gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
+              envsubst < ${MANIFESTS_DIR}/before_patch/web.yml > ${MANIFESTS_DIR}/after_patched_web.yml
+              envsubst < ${MANIFESTS_DIR}/before_patch/job.yml > ${MANIFESTS_DIR}/after_patched_job.yml
+              kubectl apply -f ${MANIFESTS_DIR}/ --record
+              kubectl rollout status deployment/${PROJECT_NAME}
+              # chmod +x ${MANIFESTS_DIR}/deploy.sh
+              # ${MANIFESTS_DIR}/deploy.sh
             fi
