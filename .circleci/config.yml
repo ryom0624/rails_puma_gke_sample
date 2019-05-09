@@ -15,67 +15,77 @@ jobs:
     steps:
       - checkout
       - setup_remote_docker
-      - restore_cache:
-          keys:
-            - v1-{{ .Branch }}
-          paths:
-            - /caches/app.tar
       - run:
-          name: Install dependencies
+        name: debug:
           command: |
-            apt-get install -qq -y gettext
-            # curl -L "https://github.com/docker/compose/releases/download/1.12.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-            # chmod +x /usr/local/bin/docker-compose
-      - run:
-          name: Check docker version
-          command: |
-            docker version
-      - run:
-          name: Load Docker image layer cache
-          command: |
-            set +o pipefail
-            docker load -i /caches/app.tar | true
-      - run:
-          name: Build application Docker image
-          command: |
-            docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 .
-            docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
-            # docker build -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 .
-            # docker build -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
-            docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
-            docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
-      - run:
-          name: Save Docker image layer cache
-          command: |
-            mkdir -p /caches
-            docker save -o /caches/app.tar asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
-            docker save -o /caches/app.tar asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
-      - save_cache:
-          key: v1-{{ .Branch }}-{{ epoch }}
-          paths:
-            - /caches/app.tar
+            ls -la ${MANIFESTS_DIR}
+            cd ${MANIFESTS_DIR}/before_patch
+            
+            envsubst < ${MANIFESTS_DIR}/before_patch/web.yml > ${MANIFESTS_DIR}/after_patched_web.yml
+            envsubst < ${MANIFESTS_DIR}/before_patch/job.yml > ${MANIFESTS_DIR}/after_patched_job.yml
+            cat ${MANIFESTS_DIR}/after_patched_web.yml
+
+      # - restore_cache:
+      #     keys:
+      #       - v1-{{ .Branch }}
+      #     paths:
+      #       - /caches/app.tar
       # - run:
-      #     name: Run tests
+      #     name: Install dependencies
       #     command: |
-      #       docker-compose up -d
-      - deploy:
-          name: Deploy application Docker image
-          command: |
-            if [ "${CIRCLE_BRANCH}" == "master" ]; then
-              echo $ACCT_AUTH | base64 -d > ${HOME}/account-auth.json
-              gcloud auth activate-service-account --key-file ${HOME}/account-auth.json
-              gcloud config set project $PROJECT_NAME
-              gcloud --quiet config set container/cluster $CLUSTER_NAME
-              gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
-              gcloud --quiet container clusters get-credentials $CLUSTER_NAME
-              gcloud config set container/use_client_certificate True
-              gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
-              gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
-              ls -la ${MANIFESTS_DIR}
-              envsubst < ${MANIFESTS_DIR}/before_patch/web.yml > ${MANIFESTS_DIR}/after_patched_web.yml
-              envsubst < ${MANIFESTS_DIR}/before_patch/job.yml > ${MANIFESTS_DIR}/after_patched_job.yml
-              cat ${MANIFESTS_DIR}/after_patched_web.yml
-              # kubectl apply -f ${MANIFESTS_DIR}/ --record
-              # chmod +x ${MANIFESTS_DIR}/deploy.sh
-              # ${MANIFESTS_DIR}/deploy.sh
-            fi
+      #       apt-get install -qq -y gettext
+      #       # curl -L "https://github.com/docker/compose/releases/download/1.12.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+      #       # chmod +x /usr/local/bin/docker-compose
+      # - run:
+      #     name: Check docker version
+      #     command: |
+      #       docker version
+      # - run:
+      #     name: Load Docker image layer cache
+      #     command: |
+      #       set +o pipefail
+      #       docker load -i /caches/app.tar | true
+      # - run:
+      #     name: Build application Docker image
+      #     command: |
+      #       docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 .
+      #       docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
+      #       # docker build -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 .
+      #       # docker build -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
+      #       docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
+      #       docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
+      # - run:
+      #     name: Save Docker image layer cache
+      #     command: |
+      #       mkdir -p /caches
+      #       docker save -o /caches/app.tar asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
+      #       docker save -o /caches/app.tar asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
+      # - save_cache:
+      #     key: v1-{{ .Branch }}-{{ epoch }}
+      #     paths:
+      #       - /caches/app.tar
+      # # - run:
+      # #     name: Run tests
+      # #     command: |
+      # #       docker-compose up -d
+      # - deploy:
+      #     name: Deploy application Docker image
+      #     command: |
+      #       if [ "${CIRCLE_BRANCH}" == "master" ]; then
+      #         echo $ACCT_AUTH | base64 -d > ${HOME}/account-auth.json
+      #         gcloud auth activate-service-account --key-file ${HOME}/account-auth.json
+      #         gcloud config set project $PROJECT_NAME
+      #         gcloud --quiet config set container/cluster $CLUSTER_NAME
+      #         gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
+      #         gcloud --quiet container clusters get-credentials $CLUSTER_NAME
+      #         gcloud config set container/use_client_certificate True
+      #         gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
+      #         gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
+      #         ls -la ${MANIFESTS_DIR}
+      #         envsubst < ${MANIFESTS_DIR}/before_patch/web.yml > ${MANIFESTS_DIR}/after_patched_web.yml
+      #         envsubst < ${MANIFESTS_DIR}/before_patch/job.yml > ${MANIFESTS_DIR}/after_patched_job.yml
+      #         cat ${MANIFESTS_DIR}/after_patched_web.yml
+      #         # kubectl apply -f ${MANIFESTS_DIR}/ --record
+      #         # chmod +x ${MANIFESTS_DIR}/deploy.sh
+      #         # ${MANIFESTS_DIR}/deploy.sh
+      #       fi
