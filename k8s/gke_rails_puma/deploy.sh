@@ -20,6 +20,7 @@ while [ true ]; do
     break
   elif [[ "$failed" -gt "0" ]]; then
     kubectl describe job setup
+    kubectl logs job setup
     kubectl delete job setup
     echo 'マイグレートに失敗！'
     exit 1
