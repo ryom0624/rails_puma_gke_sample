@@ -7,8 +7,8 @@ metadata:
 
 spec:
   # type: ClusterIP
-  type: NodePort
-  # type: LoadBalancer
+  # type: NodePort
+  type: LoadBalancer
   # Label がこれらにマッチした Pod にアクセスを流す
   selector:
     app: rails
