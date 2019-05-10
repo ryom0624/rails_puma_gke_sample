@@ -7,8 +7,8 @@ metadata:
 
 spec:
   # type: ClusterIP
-  # type: NodePort
-  type: LoadBalancer
+  type: NodePort
+  # type: LoadBalancer
   # Label がこれらにマッチした Pod にアクセスを流す
   selector:
     app: rails
@@ -42,32 +42,6 @@ spec:
   selector:
     matchLabels:
       server: web
-
-# ---
-# Deployment の定義
-# apiVersion: apps/v1
-# kind: Deployment
-# metadata:
-#   # この Deployment の名前
-#   name: web
-#   # この Deployment につけるラベル
-#   labels:
-#     app: rails
-#
-# # 管理する ReplicaSet の定義
-# spec:
-#   # 展開するレプリカ数
-#   replicas: 3
-#   # strategy:
-#   #   type: RollingUpdate
-#   #   rollingUpdate:
-#   #     maxSurge: 1
-#   #     maxUnavailable: 25%
-#   # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
-#   selector:
-#     matchLabels:
-#       server: web
-
 
   # 展開する Pod の定義
   template:
@@ -116,10 +90,3 @@ spec:
             - mountPath: /webapp/tmp/sockets
               name: sockets
 
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: 8080
-          #   initialDelaySeconds: 5
-          #   periodSeconds: 5
-          #   successThreshold: 1
