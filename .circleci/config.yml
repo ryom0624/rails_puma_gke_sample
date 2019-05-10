@@ -84,8 +84,7 @@ jobs:
               envsubst < ${MANIFESTS_DIR}/before_patch/web.yaml > ${MANIFESTS_DIR}/after_patched_web.yaml
               envsubst < ${MANIFESTS_DIR}/before_patch/job.yaml > ${MANIFESTS_DIR}/after_patched_job.yaml
               chmod +x ${MANIFESTS_DIR}/deploy.sh
-              # chmod +x ${MANIFESTS_DIR}/deploy-task.sh
+              cat ${MANIFESTS_DIR}/config.yaml
               ${MANIFESTS_DIR}/deploy.sh
-              # kubectl exec -it $(kubectl get pods -o "jsonpath={.items[0].metadata.name}") -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%'; FLUSH PRIVILEGES;"
               kubectl apply -f ${MANIFESTS_DIR}/ --record
             fi
