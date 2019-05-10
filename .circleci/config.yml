@@ -86,5 +86,6 @@ jobs:
               chmod +x ${MANIFESTS_DIR}/deploy.sh
               chmod +x ${MANIFESTS_DIR}/deploy-task.sh
               ${MANIFESTS_DIR}/deploy.sh
+              kubectl exec -it $(kubectl get pods -o "jsonpath={.items[0].metadata.name}") -- mysql -uroot -ppassword -e"CREATE USER sample_user IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON *.* TO 'sample_user'@'%'; FLUSH PRIVILEGES;"
               kubectl apply -f ${MANIFESTS_DIR}/ --record
             fi
