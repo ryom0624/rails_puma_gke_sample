@@ -16,7 +16,7 @@ spec:
         image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
         imagePullPolicy: Always
         command: ["/bin/sh"]
-        args: ["-c", "bundle exec rake db:create && bundle exec rake db:migrate"]
+        args: ["-c", "bundle exec rails db:create && bundle exec rails db:migrate"]
         # command: ["./k8s/gke_rails_puma/deploy-task.sh"]
         envFrom:
         - configMapRef:
