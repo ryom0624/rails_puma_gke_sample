@@ -48,8 +48,10 @@ jobs:
       - run:
           name: Build application Docker image
           command: |
-            docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 containers/nginx
-            docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
+            docker build -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 containers/nginx
+            docker build -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
+            # docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 containers/nginx
+            # docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
             docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
             docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
       - run:
