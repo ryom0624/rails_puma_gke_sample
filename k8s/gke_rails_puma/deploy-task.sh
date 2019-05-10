@@ -6,7 +6,7 @@ kubectl delete job setup 2&> /dev/null || true
 kubectl create -f ./k8s/gke_rails_puma/after_patched_job.yaml
 # Jobが正常に実行されるまで待ちます
 while [ true ]; do
-  phase=`kubectl get pods -a --selector="name=deploy-tasks" -o 'jsonpath={.items[0].status.phase}' || 'false'`
+  phase=`kubectl get pods --selector="name=deploy-tasks" -o 'jsonpath={.items[0].status.phase}' || 'false'`
   if [[ "$phase" != 'Pending' ]]; then
     break
   fi
