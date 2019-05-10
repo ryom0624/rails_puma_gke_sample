@@ -83,7 +83,7 @@ jobs:
               gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
               envsubst < ${MANIFESTS_DIR}/before_patch/web.yaml > ${MANIFESTS_DIR}/after_patched_web.yaml
               envsubst < ${MANIFESTS_DIR}/before_patch/job.yaml > ${MANIFESTS_DIR}/after_patched_job.yaml
-              chmod +x ${MANIFESTDIR}/deploy-tasks.sh
+              chmod +x ${MANIFESTDIR}/deploy-task.sh ${MANIFESTDIR}
               ${MANIFESTDIR}/deploy-task.sh
               kubectl apply -f ${MANIFESTS_DIR}/ --record
             fi

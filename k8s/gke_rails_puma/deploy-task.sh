@@ -3,7 +3,7 @@
 # 前のJobが残っていたらまずは消す
 kubectl delete job setup 2&> /dev/null || true
 # マイグレート用のJobを作成し、実行します
-kubectl create -f ${MANIFESTS_DIR}/after_patched_job.yaml
+kubectl create -f ./k8s/gke_rails_puma/after_patched_job.yaml
 # Jobが正常に実行されるまで待ちます
 while [ true ]; do
   phase=`kubectl get pods -a --selector="name=deploy-tasks" -o 'jsonpath={.items[0].status.phase}' || 'false'`
