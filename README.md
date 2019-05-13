@@ -30,6 +30,10 @@ $ sudo su
 
 # deploy
 ```
+// GCPのクラスタとkubectlを紐付ける
+$ gcloud container clusters get-credentials [cluster name] --zone [zonename]
+gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-northeast1-a
+
 // GCP上で先に作っておく。
 $ gcloud beta compute disks create --size=10GB my-data-disk --zone asia-northeast1-a
 ```
