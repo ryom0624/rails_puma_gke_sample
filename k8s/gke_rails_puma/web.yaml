@@ -57,6 +57,7 @@ spec:
           emptyDir: {}
       
       restartPolicy: Always
+      terminationGracePeriodSeconds: 60
 
       containers:
         - name: nginx
