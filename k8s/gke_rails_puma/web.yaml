@@ -113,7 +113,6 @@ spec:
             - mountPath: /webapp/tmp/sockets
               name: sockets
           # 
-          # 
           # readinessProbe:
           #   httpGet:
           #     path: /
