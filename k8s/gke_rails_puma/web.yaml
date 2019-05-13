@@ -55,6 +55,8 @@ spec:
       volumes:
         - name: sockets
           emptyDir: {}
+      
+      restartPolicy: Always
 
       containers:
         - name: nginx
@@ -90,3 +92,14 @@ spec:
             - mountPath: /webapp/tmp/sockets
               name: sockets
 
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            # 初回ヘルスチェック開始までの遅延
+            initialDelaySeconds: 5
+            # ヘルスチェックの間隔
+            periodSeconds: 5
+            # 成功と判断するまでのチェック回数
+            successThreshold: 1
