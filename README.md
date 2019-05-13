@@ -30,6 +30,9 @@ $ sudo su
 
 # deploy
 ```
+// クラスタの作成
+$ gcloud beta container --project "testing-190408-237002" clusters create "rails-puma-gke-sample" --zone "asia-northeast1-a" --username "admin" --cluster-version "1.11.8-gke.6" --machine-type "custom-1-2048" --image-type "COS" --disk-type "pd-standard" --disk-size "10" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/testing-190408-237002/global/networks/default" --subnetwork "projects/testing-190408-237002/regions/asia-northeast1/subnetworks/default" --enable-autoscaling --min-nodes "1" --max-nodes "5" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair
+
 // GCPのクラスタとkubectlを紐付ける
 $ gcloud container clusters get-credentials [cluster name] --zone [zonename]
 gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-northeast1-a
