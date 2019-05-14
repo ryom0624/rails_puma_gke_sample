@@ -74,7 +74,7 @@ jobs:
               kubectl create secret generic cloudsql-instance-credentials --from-file=credentials.json=${HOME}/account-auth.json
               # kubectl apply -f ${MANIFESTS_DIR}/config.yaml --record
               kubectl apply -f ${MANIFESTS_DIR}/ingress.yaml --record
-              kubectl apply -f ${MANIFESTS_DIR}/secrets.yaml --record
+              kubectl apply -f ${MANIFESTS_DIR}/secret.yaml --record
               # kubectl apply -f ${MANIFESTS_DIR}/db.yaml --record
               # kubectl apply -f ${MANIFESTS_DIR}/db-volume.yaml --record
               envsubst < ${MANIFESTS_DIR}/web.yaml > ${MANIFESTS_DIR}/patched_web.yaml
