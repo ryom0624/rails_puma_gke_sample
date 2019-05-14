@@ -1,0 +1,135 @@
+# Service の定義
+apiVersion: v1
+kind: Service
+metadata:
+  # この Service の名前
+  name: webserver-service
+
+spec:
+  # type: ClusterIP
+  type: NodePort
+  # type: LoadBalancer
+  # Label がこれらにマッチした Pod にアクセスを流す
+  selector:
+    app: rails
+    server: web
+  # ポートの指定
+  ports:
+    - name: http
+      protocol: TCP
+      # ClusterIPが受信するポート
+      port: 80
+      # 送信するポート
+      targetPort: target
+      # ローカルに公開するポート(30000~)
+      nodePort: 30000
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: web
+  labels:
+    app: rails
+
+spec:
+  serviceName: webserver-service
+  # podManagementPolicy: "Parallel"
+  replicas: 3
+  updateStrategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      server: web
+
+  # 展開する Pod の定義
+  template:
+    metadata:
+      # この Pod につける Label
+      labels:
+        app: rails
+        server: web
+
+    spec:
+      volumes:
+        - name: sockets
+          emptyDir: {}
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+      
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command: ["/cloud_sql_proxy",
+                    "-instances=<INSTANCE_CONNECTION_NAME>=tcp:3306",
+                    "-credential_file=/secrets/cloudsql/credentials.json"]
+          securityContext:
+            runAsUser: 2  # non-root user
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+
+        - name: rails
+          image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: TZ
+              value: Asia/Tokyo
+            - name: RAILS_ENV
+              value: development
+            - name: DB_HOST
+              value: 127.0.0.1
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-password
+                  key: username
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: cloudsql-password
+                  key: password
+          # envFrom:
+          #   - configMapRef:
+          #       name: config
+          command:
+            - bundle
+          args:
+            - exec
+            - puma
+            - -C
+            - config/puma.rb
+          volumeMounts:
+            - mountPath: /webapp/tmp/sockets
+              name: sockets
+
+        - name: nginx
+          # image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/web:latest
+          image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
+          imagePullPolicy: IfNotPresent
+          ports:
+            # Service から受けるポート
+            - name: target
+              containerPort: 8080
+          volumeMounts:
+            - mountPath: /webapp/tmp/sockets
+              name: sockets
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+            timeoutSeconds: 20
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 5; nginx -s quit; sleep 45"]

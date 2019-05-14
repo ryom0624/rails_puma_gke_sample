@@ -1,0 +1,24 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: setup
+  labels: 
+    name: deploy-task
+spec:
+  template:
+    metadata:
+      name: setup
+      labels: 
+        name: deploy-task
+    spec:
+      containers:
+      - name: setup
+        image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
+        imagePullPolicy: Always
+        command: ["/bin/sh"]
+        args: ["-c", "bundle exec rails db:create && bundle exec rails db:migrate"]
+        # command: ["./k8s/gke_rails_puma/deploy-task.sh"]
+        envFrom:
+        - configMapRef:
+            name: config
+      restartPolicy: Never
