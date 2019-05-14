@@ -42,7 +42,6 @@ spec:
   selector:
     matchLabels:
       server: web
-
 # ---
 # Deployment の定義
 # apiVersion: apps/v1
@@ -78,6 +77,7 @@ spec:
         server: web
 
     spec:
+      terminationGracePeriodSeconds: 60
       volumes:
         - name: sockets
           emptyDir: {}
@@ -93,9 +93,21 @@ spec:
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 15; /usr/sbin/nginx -s quit; sleep 10"]
+
 
         - name: rails
-          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:latest
+          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:v0.1
           imagePullPolicy: Never
           env:
             - name: TZ
@@ -115,10 +127,3 @@ spec:
             - mountPath: /webapp/tmp/sockets
               name: sockets
 
-          # readinessProbe:
-          #   httpGet:
-          #     path: /
-          #     port: 8080
-          #   initialDelaySeconds: 5
-          #   periodSeconds: 5
-          #   successThreshold: 1
