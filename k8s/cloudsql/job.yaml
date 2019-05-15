@@ -18,7 +18,22 @@ spec:
         command: ["/bin/sh"]
         args: ["-c", "bundle exec rails db:create && bundle exec rails db:migrate"]
         # command: ["./k8s/gke_rails_puma/deploy-task.sh"]
-        envFrom:
-        - configMapRef:
-            name: config
+        env:
+          - name: DB_HOST
+            value: 127.0.0.1
+          - name: MYSQL_ROOT_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-password
+                key: password
+          - name: MYSQL_USER
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-password
+                key: username
+          - name: MYSQL_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: cloudsql-password
+                key: password
       restartPolicy: Never
