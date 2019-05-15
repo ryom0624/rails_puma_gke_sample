@@ -58,4 +58,4 @@ spec:
                 secretKeyRef:
                   name: cloudsql-password
                   key: password
-        restartPolicy: Never
+          restartPolicy: Never
