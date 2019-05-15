@@ -11,7 +11,34 @@ spec:
       labels: 
         name: deploy-task
     spec:
+      volumes:
+        - name: cloudsql-instance-credentials
+          secret:
+            secretName: cloudsql-instance-credentials
+        - name: ssl-certs
+          hostPath:
+            path: /etc/ssl/certs
+        - name: cloudsql
+          emptyDir: {}
+
       containers:
+        - name: cloudsql-proxy
+          image: gcr.io/cloudsql-docker/gce-proxy:1.11
+          command: ["/cloud_sql_proxy",
+                    "-instances=<INSTANCE_CONNECTION_NAME>=tcp:3306",
+                    "-credential_file=/secrets/cloudsql/credentials.json"]
+          securityContext:
+            runAsUser: 2  # non-root user
+            allowPrivilegeEscalation: false
+          volumeMounts:
+            - name: cloudsql-instance-credentials
+              mountPath: /secrets/cloudsql
+              readOnly: true
+            - name: ssl-certs
+              mountPath: /etc/ssl/certs
+            - name: cloudsql
+              mountPath: /cloudsql
+
       - name: setup
         image: asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
         imagePullPolicy: Always
@@ -21,11 +48,6 @@ spec:
         env:
           - name: DB_HOST
             value: 127.0.0.1:3306
-          - name: MYSQL_ROOT_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: cloudsql-password
-                key: rootpass
           - name: MYSQL_USER
             valueFrom:
               secretKeyRef:
