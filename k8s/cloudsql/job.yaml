@@ -47,7 +47,7 @@ spec:
           # command: ["./k8s/gke_rails_puma/deploy-task.sh"]
           env:
             - name: DB_HOST
-              value: 127.0.0.1:3306
+              value: 127.0.0.1
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
