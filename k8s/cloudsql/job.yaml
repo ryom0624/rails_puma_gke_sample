@@ -22,7 +22,6 @@ spec:
           emptyDir: {}
 
       containers:
-      restartPolicy: Never
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
           command: ["/cloud_sql_proxy",
@@ -59,3 +58,4 @@ spec:
                 secretKeyRef:
                   name: cloudsql-password
                   key: password
+      restartPolicy: Never
