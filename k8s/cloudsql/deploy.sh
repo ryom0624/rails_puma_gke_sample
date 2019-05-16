@@ -20,7 +20,7 @@ while [ true ]; do
     break
   elif [[ "$failed" -gt "0" ]]; then
     kubectl describe job setup
-    kubectl logs $(kubectl get pods --selector="name=deploy-task" --output=jsonpath={.items[0].metadata.name})
+    kubectl logs $(kubectl get pods --selector="name=deploy-task" --output=jsonpath={.items[0].metadata.name}) setup
     kubectl delete job setup
     echo 'マイグレートに失敗！'
     exit 1

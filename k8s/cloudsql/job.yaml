@@ -48,9 +48,23 @@ spec:
 
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
-          command: ["/cloud_sql_proxy",
-                    "-instances=${SQL_INSTANCE_NAME}=tcp:3306",
-                    "-credential_file=/secrets/cloudsql/credentials.json"]
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              /cloud_sql_proxy -instances=${SQL_INSTANCE_NAME}=tcp:3306" -credential_file=/secrets/cloudsql/credentials.json
+              CHILD_PID=$!
+              (while true; do
+                if [[ -f "/tmp/pod/terminated" ]]; then
+                  kill $CHILD_PID;
+                  echo "Killed $CHILD_PID because the main container terminated.";
+                fi;
+                sleep 1;
+              done) &
+              wait $CHILD_PID
+              if [[ -f "/tmp/pod/terminated" ]]; then
+                exit 0;
+                echo "Job completed. Exiting...";
+              fi
           securityContext:
             runAsUser: 2  # non-root user
             allowPrivilegeEscalation: false
