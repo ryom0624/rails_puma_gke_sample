@@ -61,8 +61,8 @@ spec:
             - |
               echo "start connect cloud proxy"
               /cloud_sql_proxy -instances=testing-190408-237002:asia-northeast1:rails-gke-sample-sql=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
-              sleep 3s
               CHILD_PID=$!
+              ps
               echo $CHILD_PID
               (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID because the main container terminated."; fi; sleep 1; done) &
               wait $CHILD_PID
