@@ -59,22 +59,15 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              echo "hoge"
+              echo "start connect cloud proxy"
               /cloud_sql_proxy -instances=testing-190408-237002:asia-northeast1:rails-gke-sample-sql=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
+              sleep 3s
               CHILD_PID=$!
               echo $CHILD_PID
               (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID because the main container terminated."; fi; sleep 1; done) &
               wait $CHILD_PID
               if [[ -f "/tmp/pod/terminated" ]]; then exit 0; echo "Job completed. Exiting..."; fi
               echo "fuga"
-              # echo "start connect cloud proxy"
-              # /cloud_sql_proxy -instances=testing-190408-237002:asia-northeast1:rails-gke-sample-sql=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
-              # CHILD_PID=$!
-              # echo $CHILD_PID
-              # (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID because the main container terminated."; fi; sleep 1; done) &
-              # wait $CHILD_PID
-              # if [[ -f "/tmp/pod/terminated" ]]; then exit 0; echo "Job completed. Exiting..."; fi
-              # echo "fuga"
           securityContext:
             runAsUser: 2  # non-root user
             allowPrivilegeEscalation: false
