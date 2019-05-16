@@ -15,7 +15,7 @@ done
 
 # Jobの終了状態を取得します
 while [ true ]; do
-  echo "hoge"
+  kubectl get jobs setup -o 'jsonpath={.status.active}'
   succeeded=`kubectl get jobs setup -o 'jsonpath={.status.succeeded}'`
   failed=`kubectl get jobs setup -o 'jsonpath={.status.failed}'`
   if [[ "$succeeded" == "1" ]]; then

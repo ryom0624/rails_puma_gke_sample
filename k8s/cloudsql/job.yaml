@@ -20,6 +20,8 @@ spec:
             path: /etc/ssl/certs
         - name: cloudsql
           emptyDir: {}
+        - name: tmp-pod
+          emptyDir: {}
 
       containers:
         - name: setup
@@ -29,7 +31,7 @@ spec:
           args:
             - |
               sleep 2s
-              trap "touch /tmp/terminated" EXIT
+              trap "touch /tmp/pod/terminated" EXIT
               bundle exec rails db:create && bundle exec rails db:migrate
              
           # command: ["./k8s/gke_rails_puma/deploy-task.sh"]
@@ -46,6 +48,9 @@ spec:
                 secretKeyRef:
                   name: cloudsql-password
                   key: password
+          volumeMounts:
+            - mountPath: /tmp/pod
+              name: tmp-pod
 
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
@@ -55,14 +60,14 @@ spec:
               /cloud_sql_proxy -instances=testing-190408-237002:asia-northeast1:rails-gke-sample-sql=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
               CHILD_PID=$!
               (while true; do
-                if [[ -f "/tmp/terminated" ]]; then
+                if [[ -f "/tmp/pod/terminated" ]]; then
                   kill $CHILD_PID;
                   echo "Killed $CHILD_PID because the main container terminated.";
                 fi;
                 sleep 1;
               done) &
               wait $CHILD_PID
-              if [[ -f "/tmp/terminated" ]]; then
+              if [[ -f "/tmp/pod/terminated" ]]; then
                 exit 0;
                 echo "Job completed. Exiting...";
               fi
@@ -77,6 +82,8 @@ spec:
               mountPath: /etc/ssl/certs
             - name: cloudsql
               mountPath: /cloudsql
-
+            - name: tmp-pod
+              mountPath: /tmp/pod  
+              readOnly: true
 
       restartPolicy: Never
