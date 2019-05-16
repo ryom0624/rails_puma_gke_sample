@@ -66,9 +66,9 @@ spec:
               ps
               ls /tmp
               ls /tmp/pod
-              echo "CHILD_PID : $CHILD_PID"
-              (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $CHILD_PID; echo "Killed $CHILD_PID because the main container terminated."; fi; sleep 1; done) &
-              wait $CHILD_PID
+              echo "CHILD_PID : $!"
+              (while true; do if [[ -f "/tmp/pod/terminated" ]]; then kill $!; echo "Killed $! because the main container terminated."; fi; sleep 1; done) &
+              wait $!
               if [[ -f "/tmp/pod/terminated" ]]; then exit 0; echo "Job completed. Exiting..."; fi
               echo "fuga"
           securityContext:
