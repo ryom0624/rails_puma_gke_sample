@@ -49,7 +49,7 @@ spec:
         - name: cloudsql-proxy
           image: gcr.io/cloudsql-docker/gce-proxy:1.11
           command: ["/cloud_sql_proxy",
-                    "-instances=testing-190408-237002:asia-northeast1:rails-gke-sample-sql=tcp:3306",
+                    "-instances=${SQL_INSTANCE_NAME}=tcp:3306",
                     "-credential_file=/secrets/cloudsql/credentials.json"]
           securityContext:
             runAsUser: 2  # non-root user
