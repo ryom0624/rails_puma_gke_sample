@@ -6,7 +6,6 @@ kubectl delete job setup 2&> /dev/null || true
 kubectl create -f ./k8s/cloudsql/patched_job.yaml
 # Jobが正常に実行されるまで待ちます
 while [ true ]; do
-  echo "fuga"
   phase=`kubectl get pods --selector="name=deploy-task" -o 'jsonpath={.items[0].status.phase}' || 'false'`
   if [[ "$phase" != 'Pending' ]]; then
     break
@@ -15,7 +14,6 @@ done
 
 # Jobの終了状態を取得します
 while [ true ]; do
-  kubectl get jobs setup -o 'jsonpath={.status.active}'
   succeeded=`kubectl get jobs setup -o 'jsonpath={.status.succeeded}'`
   failed=`kubectl get jobs setup -o 'jsonpath={.status.failed}'`
   if [[ "$succeeded" == "1" ]]; then
