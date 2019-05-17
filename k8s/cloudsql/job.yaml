@@ -60,7 +60,7 @@ spec:
           args:
             - |
               echo "start connect cloud proxy"
-              /cloud_sql_proxy -instances=testing-190408-237002:asia-northeast1:rails-gke-sample-sql=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
+              /cloud_sql_proxy -instances=$(SQL_INSTANCE_NAME)=tcp:3306 -credential_file=/secrets/cloudsql/credentials.json &
               while true; do
                 if [[ -f "/tmp/pod/terminated" ]]; then kill $!; echo "Killed $! because the main container terminated. And Job completed. Exiting..."; exit 0; fi;
                 sleep 1;
