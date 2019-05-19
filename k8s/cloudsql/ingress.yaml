@@ -6,7 +6,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
  rules:
- - host: rails-puma.com
+ - host: ssl-testing.work
    http:
      paths:
      - path: /*

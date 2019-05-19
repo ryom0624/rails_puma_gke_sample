@@ -28,6 +28,12 @@ $ sudo su
 # kubectl rollout undo statefulset web
 ```
 
+# helm
+```
+# kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml
+# helm install stable/cert-manager --namespace kube-system
+```
+
 # deploy
 ```
 // クラスタの作成

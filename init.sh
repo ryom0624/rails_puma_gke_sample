@@ -28,8 +28,18 @@ sudo chmod +x /usr/local/bin/minikube
 sudo curl -L https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 
-curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
-chmod +x skaffold
+sudo yum install -y socat
+sudo curl -sL https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz -o /tmp/helm/helm.tar.gz
+sudo tar -xvf /tmp/helm/helm.tar.gz -C /tmp/helm
+sudo mv /tmp/helm/linux-amd64/helm /usr/local/bin/
+sudo chmod 755 /usr/local/bin/helm 
+sudo kubectl -n kube-system create serviceaccount tiller
+sudo kubectl create --save-config clusterrolebinding tiller --clusterrole=cluster-admin --user="system:serviceaccount:kube-system:tiller"
+sudo helm init --service-account tiller
+sudo helm init --upgrade
+
+sudo curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64
+sudo chmod +x skaffold
 sudo mv skaffold /usr/local/bin
 
 sudo mkdir -p /root/.kube
@@ -46,6 +56,7 @@ alias dcls="docker container ls -a --format \"table {{.ID}}\t{{.Names}}\t{{.Stat
 alias dcrm="docker container rm $(docker container ps -a -f status=exited -q)"
 complete -o default -F __start_kubectl k
 source <(kubectl completion bash)
+source <(helm completion bash)
 EOF
 
 sudo cat > /root/.bash_profile << EOF
