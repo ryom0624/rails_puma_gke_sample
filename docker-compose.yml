@@ -5,8 +5,8 @@ services:
       context: .
     ports:
       - 3000:3000
-    # image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:latest
-    image: test:latest
+    image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:latest
+    # image: test:latest
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_USER: sample_user
