@@ -28,5 +28,5 @@
 
 .vagrant
 credentials.json
-k8s/cloudsql/secret.yaml
+
 

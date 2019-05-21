@@ -30,11 +30,52 @@ $ sudo su
 
 # helm GKE Let's Encrypt
 ```
-# kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml
-# helm install stable/cert-manager --namespace kube-system
+// helm install (on cloud shell)
+# cd /tmp
+# wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz
+# tar xvzf helm-v2.14.0-linux-amd64.tar.gz
+# sudo mv linux-amd64/helm /usr/local/bin/helm
+# sudo chmod +x /usr/local/bin/helm
+# rm -r ./helm-v2.14.0-linux-amd64.tar.gz linux-amd64/
+# source <(helm completion bash)
+
+// serviceaccountの作成
+# kubectl create serviceaccount -n kube-system tiller
+
+// tillerを動作させるアカウントに権限付与
+#  kubectl create --save-config clusterrolebinding tiller --clusterrole=cluster-admin --user="system:serviceaccount:kube-system:tiller"
+
+// helmクライアントの初期化とtillerのデプロイ（セキュリティ的に甘いらしい）
+# sudo helm init --service-account tiller 
+
+$HELM_HOME has been configured at /home/hogehoge/.helm.
+Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+Please note: by default, Tiller is deployed with an insecure 'allow unauthenticated users' policy.
+To prevent this, run `helm init` with the --tiller-tls-verify flag.
+For more information on securing your installation see: https://docs.helm.sh/using_helm/#securing-your-helm-installation
+
+# helm repo update
+
+// cert-managerのインストール
+# kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value core/account)
+# kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.7/deploy/manifests/00-crds.yaml
+# kubectl create namespace cert-manager
+# kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+# helm install --name cert-manager --namespace cert-manager --version v0.7.2 jetstack/cert-manager
+
 ```
 
+# GKE secrets Google KMS
+```
+# gcloud auth application-default login
+# gcloud kms keyrings create secret-test --location global
+# gcloud kms keys create secret-test-key --location global --keyring secret-test --purpose encrypt
+# gcloud kms keys list --location global --keyring secret-test
+# gcloud kms keys list --location global --keyring secret-test
+projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key
 
+# kubesec encrypt -i --key projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key ./k8s/cloudsql/secret.yaml
+``` 
 
 # GKE deploy(cloud shell)
 ```
@@ -48,12 +89,12 @@ gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-nort
 // secretの作成(Google KMSを入れればこれいらない気がする。)
 # kubectl create secret generic cloudsql-password --from-literal=username=sample_gke --from-literal=password=Pr5SFXD8nEeC9X2  --from-literal=rootpass=mNAlilvk5pHIOAMh
 
-// 最初の一回だけcircle ciに入れる。
+// 最初の一回だけcircle ciに入れる。 ifであったら回避みたいなのしたい。
 # kubectl create secret generic cloudsql-instance-credentials --from-file=credentials.json=${HOME}/account-auth.json
 
-// ここでcircle ciを回す。
+// ここで一度circle ciを回す。
 
-// ingressを反映。(circle ciに入れてもOK)
+// ingressを反映。(circle ciに入れてもOK) 基本は一回だけしか使わないはず。
 # kubectl apply -f ingress.yaml
 
 

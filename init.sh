@@ -28,6 +28,8 @@ sudo chmod +x /usr/local/bin/minikube
 sudo curl -L https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 
+sudo curl -sSL https://github.com/shyiko/kubesec/releases/download/0.9.2/kubesec-0.9.2-linux-amd64 -o kubesec && chmod a+x kubesec && sudo mv kubesec /usr/local/bin/  
+
 sudo wget https://storage.googleapis.com/kubernetes-helm/helm-v2.6.2-linux-amd64.tar.gz
 tar zxfv helm-v2.14.0-linux-amd64.tar.gz
 sudo mv linux-amd64/helm /usr/local/bin
@@ -74,6 +76,7 @@ alias dcls="docker container ls -a --format \"table {{.ID}}\t{{.Names}}\t{{.Stat
 alias dcrm="docker container rm $(docker container ps -a -f status=exited -q)"
 complete -o default -F __start_kubectl k
 source <(kubectl completion bash)
+source <(kubesec completion bash)
 source <(helm completion bash)
 EOF
 
