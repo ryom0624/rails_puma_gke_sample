@@ -24,48 +24,48 @@ spec:
       # ローカルに公開するポート(30000~)
       nodePort: 30000
 
----
-
-apiVersion: apps/v1
-kind: StatefulSet
-metadata:
-  name: web
-  labels:
-    app: rails
-
-spec:
-  serviceName: webserver-service
-  # podManagementPolicy: "Parallel"
-  replicas: 3
-  updateStrategy:
-    type: RollingUpdate
-  selector:
-    matchLabels:
-      server: web
 # ---
-# Deployment の定義
+# 
 # apiVersion: apps/v1
-# kind: Deployment
+# kind: StatefulSet
 # metadata:
-#   # この Deployment の名前
 #   name: web
-#   # この Deployment につけるラベル
 #   labels:
 #     app: rails
-#
-# # 管理する ReplicaSet の定義
+# 
 # spec:
-#   # 展開するレプリカ数
+#   serviceName: webserver-service
+#   # podManagementPolicy: "Parallel"
 #   replicas: 3
-#   # strategy:
-#   #   type: RollingUpdate
-#   #   rollingUpdate:
-#   #     maxSurge: 1
-#   #     maxUnavailable: 25%
-#   # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
+#   updateStrategy:
+#     type: RollingUpdate
 #   selector:
 #     matchLabels:
 #       server: web
+---
+# Deployment の定義
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  # この Deployment の名前
+  name: web
+  # この Deployment につけるラベル
+  labels:
+    app: rails
+
+# 管理する ReplicaSet の定義
+spec:
+  # 展開するレプリカ数
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+  # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
+  selector:
+    matchLabels:
+      server: web
 
 
   # 展開する Pod の定義
@@ -107,7 +107,7 @@ spec:
 
 
         - name: rails
-          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:v0.1
+          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:v0.2
           imagePullPolicy: Never
           env:
             - name: TZ
@@ -122,6 +122,17 @@ spec:
             - puma
             - -C
             - config/puma.rb
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            successThreshold: 1
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 15; kill -QUIT `cat /webapp/tmp/sockets/server.pid`; sleep 10"]
 
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
