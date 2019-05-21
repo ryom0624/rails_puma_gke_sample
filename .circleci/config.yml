@@ -74,9 +74,9 @@ jobs:
               gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
               envsubst < ${MANIFESTS_DIR}/web.yaml > ${MANIFESTS_DIR}/patched_web.yaml
               envsubst < ${MANIFESTS_DIR}/job.yaml > ${MANIFESTS_DIR}/patched_job.yaml
-              chmod +x ${MANIFESTS_DIR}/deploy.sh
-              ${MANIFESTS_DIR}/deploy.sh
-              cat ${MANIFESTS_DIR}/patched_web.yaml
+              # chmod +x ${MANIFESTS_DIR}/deploy.sh
+              # ${MANIFESTS_DIR}/deploy.sh
+              # cat ${MANIFESTS_DIR}/patched_web.yaml
               kubectl apply -f ${MANIFESTS_DIR}/patched_web.yaml --record
               kubectl apply -f ${MANIFESTS_DIR}/patched_job.yaml --record
             fi
