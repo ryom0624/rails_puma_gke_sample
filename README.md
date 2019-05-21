@@ -48,6 +48,11 @@ gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-nort
 // secretの作成
 # kubectl create secret generic cloudsql-password --from-literal=username=sample_gke --from-literal=password=Pr5SFXD8nEeC9X2  --from-literal=rootpass=mNAlilvk5pHIOAMh
 
+// 最初の一回だけcircle ciに入れる。
+# kubectl create secret generic cloudsql-instance-credentials --from-file=credentials.json=${HOME}/account-auth.json
+
+// ここでcircle ciを回す。
+
 # kubectl apply -f ingress.yaml
 
 
