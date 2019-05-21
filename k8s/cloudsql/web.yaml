@@ -85,7 +85,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "sleep 30"]
+                command: ["sh", "-c", "echo prestop; sleep 30; echo shutdown;"]
           env:
             - name: SQL_INSTANCE_NAME
               value: ${SQL_INSTANCE_NAME} 
@@ -138,7 +138,7 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "sleep 15; kill -QUIT `cat /webapp/tmp/sockets/server.pid`; sleep 10"]
+                command: ["sh", "-c", "sleep 15; echo start kill pid...; cat/webapp/tmp/sockets/server.pid; kill -QUIT `cat /webapp/tmp/sockets/server.pid`; sleep 10"]
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
@@ -165,4 +165,4 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "sleep 5; nginx -s quit; sleep 45"]
+                command: ["sh", "-c", "echo start stop; sleep 5; nginx -s quit; sleep 45"]
