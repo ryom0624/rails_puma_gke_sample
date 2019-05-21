@@ -45,8 +45,6 @@ jobs:
             docker build --cache-from=asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest -t asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 .
             docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
             docker tag asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1 asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
-            docker push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
-            docker push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
 
       # - run:
       #     name: Save Docker image layer cache
@@ -72,6 +70,8 @@ jobs:
               gcloud config set compute/zone ${CLOUDSDK_COMPUTE_ZONE}
               gcloud --quiet container clusters get-credentials $CLUSTER_NAME
               gcloud config set container/use_client_certificate True
+              gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:latest
+              gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:latest
               gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/web:$CIRCLE_SHA1
               gcloud docker -- push asia.gcr.io/${PROJECT_NAME}/${CLOUD_REGISTRY_NAME}/app:$CIRCLE_SHA1
               # kubectl create secret generic cloudsql-instance-credentials --from-file=credentials.json=${HOME}/account-auth.json

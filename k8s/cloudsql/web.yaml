@@ -27,18 +27,24 @@ spec:
 ---
 
 apiVersion: apps/v1
-kind: StatefulSet
+kind: Deployment
 metadata:
+  # この Deployment の名前
   name: web
+  # この Deployment につけるラベル
   labels:
     app: rails
 
+# 管理する ReplicaSet の定義
 spec:
-  serviceName: webserver-service
-  # podManagementPolicy: "Parallel"
+  # 展開するレプリカ数
   replicas: 3
-  updateStrategy:
-    type: RollingUpdate
+  # strategy:
+  #   type: RollingUpdate
+  #   rollingUpdate:
+  #     maxSurge: 1
+  #     maxUnavailable: 25%
+  # Label がこれらにマッチした Pod をこの ReplicaSet の配下に置く
   selector:
     matchLabels:
       server: web
