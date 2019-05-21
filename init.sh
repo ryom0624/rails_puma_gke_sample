@@ -28,6 +28,24 @@ sudo chmod +x /usr/local/bin/minikube
 sudo curl -L https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl -o /usr/local/bin/kubectl
 sudo chmod +x /usr/local/bin/kubectl
 
+sudo wget https://storage.googleapis.com/kubernetes-helm/helm-v2.6.2-linux-amd64.tar.gz
+tar zxfv helm-v2.14.0-linux-amd64.tar.gz
+sudo mv linux-amd64/helm /usr/local/bin
+sudo chown root:root /usr/local/bin/helm
+kubectl create serviceaccount -n kube-system tiller
+kubectl create clusterrolebinding tiller-binding --clusterrole=cluster-admin --serviceaccount kube-system:tiller
+helm init --service-account tiller
+helm repo update
+kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin  --user=$(gcloud config get-value core/account)
+kubectl create namespace cert-manager
+helm install --name cert-manager --namespace cert-manager --version v0.7.2 jetstack/cert-manager
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.7/deploy/manifests/cert-manager.yaml
+kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.7/deploy/manifests/00-crds.yaml
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+kubectl get pods --namespace cert-manager
+
+
 sudo yum install -y socat
 sudo curl -sL https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz -o /tmp/helm/helm.tar.gz
 sudo tar -xvf /tmp/helm/helm.tar.gz -C /tmp/helm

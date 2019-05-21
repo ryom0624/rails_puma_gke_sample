@@ -28,13 +28,15 @@ $ sudo su
 # kubectl rollout undo statefulset web
 ```
 
-# helm
+# helm GKE Let's Encrypt
 ```
 # kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml
 # helm install stable/cert-manager --namespace kube-system
 ```
 
-# deploy
+
+
+# GKE deploy
 ```
 // クラスタの作成
 $ gcloud beta container --project "testing-190408-237002" clusters create "rails-puma-gke-sample" --zone "asia-northeast1-a" --username "admin" --cluster-version "1.11.8-gke.6" --machine-type "custom-1-2048" --image-type "COS" --disk-type "pd-standard" --disk-size "10" --scopes "https://www.googleapis.com/auth/devstorage.read_only","https://www.googleapis.com/auth/logging.write","https://www.googleapis.com/auth/monitoring","https://www.googleapis.com/auth/servicecontrol","https://www.googleapis.com/auth/service.management.readonly","https://www.googleapis.com/auth/trace.append" --num-nodes "3" --enable-cloud-logging --enable-cloud-monitoring --no-enable-ip-alias --network "projects/testing-190408-237002/global/networks/default" --subnetwork "projects/testing-190408-237002/regions/asia-northeast1/subnetworks/default" --enable-autoscaling --min-nodes "1" --max-nodes "5" --addons HorizontalPodAutoscaling,HttpLoadBalancing --enable-autoupgrade --enable-autorepair
@@ -43,8 +45,14 @@ $ gcloud beta container --project "testing-190408-237002" clusters create "rails
 $ gcloud container clusters get-credentials [cluster name] --zone [zonename]
 gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-northeast1-a
 
-// GCP上で先に作っておく。
-$ gcloud beta compute disks create --size=10GB my-data-disk --zone asia-northeast1-a
+// secretの作成
+# kubectl create secret generic cloudsql-password --from-literal=username=sample_gke --from-literal=password=Pr5SFXD8nEeC9X2  --from-literal=rootpass=mNAlilvk5pHIOAMh
+
+# kubectl apply -f ingress.yaml
+
+
+
+
 ```
 
 
