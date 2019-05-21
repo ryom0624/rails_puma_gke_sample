@@ -28,7 +28,7 @@ $ sudo su
 # kubectl rollout undo statefulset web
 ```
 
-# helm GKE Let's Encrypt
+# helm GKE Let's Encrypt[WIP]
 ```
 // helm install (on cloud shell)
 # cd /tmp
@@ -66,6 +66,7 @@ For more information on securing your installation see: https://docs.helm.sh/usi
 ```
 
 # GKE secrets Google KMS
+最初の反映は考えないといけない。
 ```
 # gcloud auth application-default login
 # gcloud kms keyrings create secret-test --location global
@@ -74,7 +75,8 @@ For more information on securing your installation see: https://docs.helm.sh/usi
 # gcloud kms keys list --location global --keyring secret-test
 projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key
 
-# kubesec encrypt -i --key projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key ./k8s/cloudsql/secret.yaml
+# kubesec encrypt -i --key=gcp:projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key ./k8s/cloudsql/secret.yaml
+# kubesec decrypt k8s/cloudsql/secret.yml | kubectl apply -f -
 ``` 
 
 # GKE deploy(cloud shell)
