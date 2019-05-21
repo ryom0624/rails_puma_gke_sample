@@ -20,7 +20,7 @@ spec:
       # ClusterIPが受信するポート
       port: 80
       # 送信するポート
-      targetPort: target
+      targetPort: 8080
       # ローカルに公開するポート(30000~)
       nodePort: 30000
 

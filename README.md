@@ -45,7 +45,7 @@ $ gcloud beta container --project "testing-190408-237002" clusters create "rails
 $ gcloud container clusters get-credentials [cluster name] --zone [zonename]
 gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-northeast1-a
 
-// secretの作成
+// secretの作成(Google KMSを入れればこれいらない気がする。)
 # kubectl create secret generic cloudsql-password --from-literal=username=sample_gke --from-literal=password=Pr5SFXD8nEeC9X2  --from-literal=rootpass=mNAlilvk5pHIOAMh
 
 // 最初の一回だけcircle ciに入れる。
@@ -53,6 +53,7 @@ gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-nort
 
 // ここでcircle ciを回す。
 
+// ingressを反映。(circle ciに入れてもOK)
 # kubectl apply -f ingress.yaml
 
 
