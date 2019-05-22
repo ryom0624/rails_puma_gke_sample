@@ -71,7 +71,7 @@ spec:
           emptyDir: {}
       
       restartPolicy: Always
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 300
 
       containers:
         - name: cloudsql-proxy
@@ -138,7 +138,8 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["sh", "-c", "sleep 15; echo start kill pid...; cat/webapp/tmp/sockets/server.pid; kill -QUIT `cat /webapp/tmp/sockets/server.pid`; sleep 10; echo end;"]
+                command: ["sh", "-c", "sleep 30; exit 0;"]
+                # command: ["sh", "-c", "sleep 15; echo start kill pid...; cat/webapp/tmp/sockets/server.pid; kill -QUIT `cat /webapp/tmp/sockets/server.pid`; sleep 10; echo end;"]
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
@@ -163,6 +164,22 @@ spec:
             successThreshold: 1
             timeoutSeconds: 20
           lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "touch /webapp/tmp/poststop; echo start > /webapp/tmp/poststop;"]
             preStop:
               exec:
-                command: ["sh", "-c", "echo start stop; sleep 5; nginx -s quit; sleep 45; echo end;"]
+                command:
+                  - sh
+                  - -c
+                  - |
+                    echo "before sleep" >> /webapp/tmp/poststop
+                    sleep 3
+                    echo "checking pid file" >> /webapp/tmp/poststop
+                    PID=$(cat /run/nginx.pid)
+                    nginx -s quit
+                
+                    while [ -d /proc/$PID ]; do
+                      sleep 0.1
+                    done
+                    echo "Graceful shutdown..." >> /webapp/tmp/poststop
