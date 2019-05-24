@@ -28,43 +28,6 @@ $ sudo su
 # kubectl rollout undo statefulset web
 ```
 
-# helm GKE Let's Encrypt[WIP]
-```
-// helm install (on cloud shell)
-# cd /tmp
-# wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz
-# tar xvzf helm-v2.14.0-linux-amd64.tar.gz
-# sudo mv linux-amd64/helm /usr/local/bin/helm
-# sudo chmod +x /usr/local/bin/helm
-# rm -r ./helm-v2.14.0-linux-amd64.tar.gz linux-amd64/
-# source <(helm completion bash)
-
-// serviceaccountの作成
-# kubectl create serviceaccount -n kube-system tiller
-
-// tillerを動作させるアカウントに権限付与
-#  kubectl create --save-config clusterrolebinding tiller --clusterrole=cluster-admin --user="system:serviceaccount:kube-system:tiller"
-
-// helmクライアントの初期化とtillerのデプロイ（セキュリティ的に甘いらしい）
-# sudo helm init --service-account tiller 
-
-$HELM_HOME has been configured at /home/hogehoge/.helm.
-Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
-Please note: by default, Tiller is deployed with an insecure 'allow unauthenticated users' policy.
-To prevent this, run `helm init` with the --tiller-tls-verify flag.
-For more information on securing your installation see: https://docs.helm.sh/using_helm/#securing-your-helm-installation
-
-# helm repo update
-
-// cert-managerのインストール
-# kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value core/account)
-# kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.7/deploy/manifests/00-crds.yaml
-# kubectl create namespace cert-manager
-# kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
-# helm install --name cert-manager --namespace cert-manager --version v0.7.2 jetstack/cert-manager
-
-```
-
 # GKE secrets Google KMS
 最初の反映は考えないといけない。
 ```
@@ -99,9 +62,61 @@ gcloud container clusters get-credentials rails-puma-gke-sample --zone asia-nort
 // ingressを反映。(circle ciに入れてもOK) 基本は一回だけしか使わないはず。
 # kubectl apply -f ingress.yaml
 
+```
 
+# helm GKE Let's Encrypt[WIP]
+```
+// helm install (on cloud shell)
+# cd /tmp
+# wget https://storage.googleapis.com/kubernetes-helm/helm-v2.14.0-linux-amd64.tar.gz
+# tar xvzf helm-v2.13.1-linux-amd64.tar.gz
+# sudo mv linux-amd64/helm /usr/local/bin/helm
+# sudo chmod +x /usr/local/bin/helm
+# rm -r ./helm-v2.13.1-linux-amd64.tar.gz linux-amd64/
+# source <(helm completion bash)
 
+// serviceaccountの作成
+# kubectl create serviceaccount -n kube-system tiller
 
+// tillerを動作させるアカウントに権限付与
+#  kubectl create --save-config clusterrolebinding tiller --clusterrole=cluster-admin --user="system:serviceaccount:kube-system:tiller"
+
+// helmクライアントの初期化とtillerのデプロイ（セキュリティ的に甘いらしい）
+# sudo helm init --service-account tiller  → エラーでたら以下
+# kubectl delete svc tiller-deploy -n kube-system
+# kubectl -n kube-system delete deploy tiller-deploy
+# kubectl create serviceaccount --namespace kube-system tiller
+# kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+# helm init --service-account tiller
+
+// エラーでなかったら以下。
+# sudo helm init --service-account default
+
+$HELM_HOME has been configured at /home/hogehoge/.helm.
+Tiller (the Helm server-side component) has been installed into your Kubernetes Cluster.
+Please note: by default, Tiller is deployed with an insecure 'allow unauthenticated users' policy.
+To prevent this, run `helm init` with the --tiller-tls-verify flag.
+For more information on securing your installation see: https://docs.helm.sh/using_helm/#securing-your-helm-installation
+
+# helm repo update
+
+// cert-managerのインストール
+# kubectl create clusterrolebinding cluster-admin-binding --clusterrole=cluster-admin --user=$(gcloud config get-value core/account)
+# kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.7/deploy/manifests/00-crds.yaml
+# kubectl create namespace cert-manager
+# kubectl label namespace cert-manager certmanager.k8s.io/disable-validation=true
+# helm install --name cert-manager --namespace cert-manager --version v0.7.2 jetstack/cert-manager
+
+# kubectl apply -f cert-manager.yaml -n kube-system
+// 少し時間かかる
+# kubectl get cert
+# kubectl describe cert
+
+// ingressのspec.tlsの設定を解除して
+# kubectl apply -f ingress.yaml
+
+# openssl s_client -connect [domain]:443
+# kubectl get certificate -o jsonpath="{.items..status.notAfter}\n"
 ```
 
 
@@ -149,7 +164,10 @@ railsで特定のファイルの変更
 ```
 # kubectl apply -f k8s/ --prune --all
 # kubectl get deployment,svc,pods,pvc
+# kubectl get all
 # kubectl get services
+# kubectl get pods [pod name] -o jsonpath="{.metadata.name}"
+
 # minikube service list
 
 // minikubeのtype:LoadBalancerを使ったときのIPの確認
@@ -176,6 +194,12 @@ http://10.0.2.15:30080
 # kubectl get pods -n kube-system | grep nginx-ingress-controller
 # kubectl describe pods -n kube-system nginx-ingress-controller-...
 # kubectl describe pods -n kube-system $(kubectl get pods -n kube-system -o go-template --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}' | grep nginx-ingress-controller)
+```
+
+## helm
+```
+# kubectl get pods --namespace cert-manager
+
 ```
 
 
