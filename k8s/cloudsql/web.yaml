@@ -133,13 +133,7 @@ spec:
           # envFrom:
           #   - configMapRef:
           #       name: config
-          command:
-            - bundle
-          args:
-            - exec
-            - puma
-            - -C
-            - config/puma.rb
+          command: ["start.sh"]
           readinessProbe:
             httpGet:
               path: /
@@ -147,10 +141,6 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 5
             successThreshold: 1
-          lifecycle:
-            postStart:
-              exec:
-                command: ["bundle", "exec", "rails assets:precompile"]
             preStop:
               exec:
                 command: ["sh", "-c", "sleep 90;"]
