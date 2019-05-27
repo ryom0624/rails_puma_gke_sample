@@ -30,7 +30,6 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              npm install yarn -g
               bundle exec rails assets:precompile
               echo "start migration"
               sleep 2s
