@@ -42,6 +42,8 @@ spec:
           env:
             - name: DB_HOST
               value: 127.0.0.1
+            - name: RAILS_ENV
+              value: production
             - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
