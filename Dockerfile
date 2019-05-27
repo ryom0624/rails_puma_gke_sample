@@ -6,7 +6,7 @@ RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://ar
 RUN apt-get update -qq && \
     apt-get install -y build-essential \
                        nodejs npm && \
-                       npm install -g yarn &&
+                       npm install -g yarn
 
 
 
