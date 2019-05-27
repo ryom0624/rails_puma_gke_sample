@@ -4,7 +4,7 @@ RUN printf "deb http://archive.debian.org/debian/ jessie main\ndeb-src http://ar
 
 # リポジトリを更新し依存モジュールをインストール
 RUN apt-get update -qq && \
-    apt-get install -y build-essential apt-transport-https
+    apt-get install -y build-essential apt-transport-https apt-utils
 
 # node(8.x)
 RUN curl -sL https://deb.nodesource.com/setup_8.x | bash - \
