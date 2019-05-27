@@ -26,7 +26,7 @@ sudo curl -L https://storage.googleapis.com/kubernetes-release/release/$(curl -s
 sudo chmod +x /usr/local/bin/kubectl
 
 # kubesec
-sudo curl -sSL https://github.com/shyiko/kubesec/releases/download/0.9.2/kubesec-0.9.2-linux-amd64 -o kubesec && chmod a+x kubesec && sudo mv kubesec /usr/local/bin/  
+sudo curl -sSL https://github.com/shyiko/kubesec/releases/download/0.9.2/kubesec-0.9.2-linux-amd64 -o kubesec && sudo chmod a+x kubesec && sudo mv kubesec /usr/local/bin/  
 
 # stern
 sudo curl -L https://github.com/wercker/stern/releases/download/1.10.0/stern_linux_amd64 -o /usr/local/bin/stern

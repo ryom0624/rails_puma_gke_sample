@@ -40,7 +40,9 @@ projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/
 
 # edit
 # kubesec decrypt -i secret.yml
+# gcloud kms keys update projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key --primary-version=1 --location global --keyring secret-test
 
+# gcloud KMSのコンソールでローテーションを回す。 
 
 # kubesec encrypt -i --key=gcp:projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key ./k8s/cloudsql/secret.yaml
 # kubesec decrypt k8s/cloudsql/secret.yml | kubectl apply -f -
