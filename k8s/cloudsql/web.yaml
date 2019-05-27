@@ -39,6 +39,7 @@ metadata:
 spec:
   # 展開するレプリカ数
   replicas: 3
+  revisionHistoryLimit: 3
   strategy:
     type: RollingUpdate
     rollingUpdate:
