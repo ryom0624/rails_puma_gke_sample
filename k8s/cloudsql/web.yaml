@@ -133,7 +133,11 @@ spec:
           # envFrom:
           #   - configMapRef:
           #       name: config
-          command: ["start.sh"]
+          command:
+            - /bin/bash
+          args:
+            - -c
+            - bundle exec rails assets:precompile && bundle exec puma -C config/puma.rb
           readinessProbe:
             httpGet:
               path: /
