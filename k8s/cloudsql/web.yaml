@@ -148,6 +148,9 @@ spec:
             periodSeconds: 5
             successThreshold: 1
           lifecycle:
+            postStart:
+              exec:
+                command: ["bundle", "exec", "rails assets:precompile"]
             preStop:
               exec:
                 command: ["sh", "-c", "sleep 90;"]
