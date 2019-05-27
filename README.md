@@ -189,6 +189,9 @@ http://10.0.2.15:30080
 // sample_guide
 #  for PODNAME in `kubectl get pods -l app=sample-app -o jsonpath='{.items[*].metadata.name}'`; do kubectl  exec -it ${PODNAME} -- cp /etc/hostname /usr/share/nginx/html/index.html; done
 
+// Delete Evectid Pods
+# kubectl get po --all-namespaces --field-selector 'status.phase!=Running' -o json | kubectl delete -f -
+
 
 // ingress debuging
 # kubectl get pods -n kube-system | grep nginx-ingress-controller
