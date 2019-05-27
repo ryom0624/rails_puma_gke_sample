@@ -115,15 +115,20 @@ spec:
               value: production
             - name: DB_HOST
               value: 127.0.0.1
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  name: secret
+                  key: secret_key_base
             - name: MYSQL_USER
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-password
+                  name: secret
                   key: username
             - name: MYSQL_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: cloudsql-password
+                  name: secret
                   key: password
           # envFrom:
           #   - configMapRef:

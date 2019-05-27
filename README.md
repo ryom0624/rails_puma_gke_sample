@@ -38,6 +38,10 @@ $ sudo su
 # gcloud kms keys list --location global --keyring secret-test
 projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key
 
+# edit
+# kubesec decrypt -i secret.yml
+
+
 # kubesec encrypt -i --key=gcp:projects/testing-190408-237002/locations/global/keyRings/secret-test/cryptoKeys/secret-test-key ./k8s/cloudsql/secret.yaml
 # kubesec decrypt k8s/cloudsql/secret.yml | kubectl apply -f -
 ``` 
