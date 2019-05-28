@@ -82,6 +82,8 @@ spec:
       volumes:
         - name: sockets
           emptyDir: {}
+        - name: public
+          emptyDir: {}
 
       containers:
         - name: nginx
@@ -93,6 +95,8 @@ spec:
               containerPort: 8080
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
+              name: sockets
+            - mountPath: /webapp/public
               name: sockets
           readinessProbe:
             httpGet:
@@ -172,4 +176,5 @@ spec:
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
-
+            - mountPath: /webapp/tmp/sockets
+              name: sockets
