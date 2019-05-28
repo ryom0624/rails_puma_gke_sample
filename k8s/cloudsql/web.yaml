@@ -65,10 +65,13 @@ spec:
 
     spec:
       volumes:
+        # nginxコンテナとsocketを共有するディレクトリ
         - name: sockets
           emptyDir: {}
+        # nginxコンテナとassets共有するディレクトリ
         - name: public
           emptyDir: {}
+        # cloud proxyコンテナ接続用
         - name: cloudsql-instance-credentials
           secret:
             secretName: cloudsql-instance-credentials
@@ -137,7 +140,7 @@ spec:
           #   - configMapRef:
           #       name: config
           command:
-            - /bin/bash
+            - sh
           args:
             - -c
             - bundle exec rails assets:precompile && bundle exec puma -C config/puma.rb
@@ -183,7 +186,7 @@ spec:
           lifecycle:
             postStart:
               exec:
-                command: ["/bin/sh", "-c", "touch /webapp/tmp/poststop; echo start > /webapp/tmp/poststop;"]
+                command: ["sh", "-c", "touch /webapp/tmp/poststop; echo start > /webapp/tmp/poststop;"]
             preStop:
               exec:
                 command: ["sh", "-c", "sleep 90;"]

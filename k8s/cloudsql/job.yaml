@@ -20,6 +20,7 @@ spec:
             path: /etc/ssl/certs
         - name: cloudsql
           emptyDir: {}
+        # railspodのmigrationが終わったことを知らせるファイルを置くためのディレクトリ
         - name: tmp-pod
           emptyDir: {}
 
