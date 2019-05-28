@@ -156,7 +156,6 @@ spec:
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
-          volumeMounts:
             - mountPath: /webapp/public
               name: public
 
@@ -172,7 +171,6 @@ spec:
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
-          volumeMounts:
             - mountPath: /webapp/public
               name: public
           readinessProbe:
