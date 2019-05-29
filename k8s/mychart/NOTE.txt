@@ -1,0 +1,3 @@
+$ helm install --name  sample  k8s/mychart/
+
+$ helm upgrade sample  k8s/mychart/

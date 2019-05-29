@@ -1,0 +1,104 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: webserver-service
+spec:
+  type: NodePort
+  selector:
+    {{- template "labels" .}}
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: target
+      nodePort: 30000
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web
+  labels:
+    app: rails
+
+spec:
+  replicas: 3
+  revisionHistoryLimit: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 100%
+      maxUnavailable: 0
+  selector:
+    matchLabels:
+      server: web
+  template:
+    metadata:
+      labels:
+        app: rails
+        server: web
+
+    spec:
+      terminationGracePeriodSeconds: 150
+      volumes:
+        - name: sockets
+          emptyDir: {}
+        - name: public
+          emptyDir: {}
+
+      containers:
+        - name: nginx
+          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/web:latest
+          imagePullPolicy: Never
+          ports:
+            - name: target
+              containerPort: 8080
+          volumeMounts:
+            - mountPath: /webapp/tmp/sockets
+              name: sockets
+            - mountPath: /webapp/public
+              name: public
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 90;"]
+        - name: rails
+          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:v0.3
+          imagePullPolicy: Never
+          env:
+            - name: TZ
+              value: Asia/Tokyo
+          envFrom:
+            - configMapRef:
+                name: config
+          command:
+            - bundle
+          args:
+            - exec
+            - puma
+            - -C
+            - config/puma.rb
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 3000
+            initialDelaySeconds: 30
+            periodSeconds: 5
+            successThreshold: 1
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "sleep 90;"]
+          volumeMounts:
+            - mountPath: /webapp/tmp/sockets
+              name: sockets
+            - mountPath: /webapp/tmp/public
+              name: public

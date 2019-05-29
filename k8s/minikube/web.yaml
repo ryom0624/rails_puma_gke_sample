@@ -97,7 +97,7 @@ spec:
             - mountPath: /webapp/tmp/sockets
               name: sockets
             - mountPath: /webapp/public
-              name: sockets
+              name: public
           readinessProbe:
             httpGet:
               path: /
@@ -139,7 +139,7 @@ spec:
 
 
         - name: rails
-          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:v0.2
+          image: asia.gcr.io/testing-190408-237002/rails_puma_gke_sample/app:v0.3
           imagePullPolicy: Never
           env:
             - name: TZ
@@ -176,5 +176,5 @@ spec:
           volumeMounts:
             - mountPath: /webapp/tmp/sockets
               name: sockets
-            - mountPath: /webapp/tmp/sockets
-              name: sockets
+            - mountPath: /webapp/tmp/public
+              name: public

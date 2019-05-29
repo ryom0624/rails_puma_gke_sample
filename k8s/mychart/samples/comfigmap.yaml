@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-configmap
+data:
+  myvalue: "Hello World"
+# 変数として利用
+  {{- $releasename := .Release.Name -}}
+# withで.Values.favoriteがくっついてくる
+  {{- with .Values.favorite }}
+  drink: {{ .drink | default "tea" | quote }}
+  food: {{ .food | repeat 5  | upper | quote }}
+# withの中でも変数化したものであればエラーにならない
+  hogehoge: {{ $releasename }}
+# - if とすることで空白を削除する
+    {{- if eq .drink "coffee" }}
+  mag: true
+    {{- end }}
+  {{- end }}
+# |- で文字列でも配列ぽくできる
+# rangeはforeach
+  toppings: |-
+  {{- range .Values.pizzaToppings }}
+    - {{ . | title | quote }}
+  {{- end }}
+# $indexで添字も出せる
+# key:value形式でもできる。
+  secondToppings: |-
+  {{- range $index, $topping := .Values.pizzaToppings }}
+  {{ $index }} : {{ $topping }}
+  {{- end }}
+  thirdToppings: |-
+  {{- range $key, $val := .Values.keyValues }}
+    {{ $key }} : {{ $val }}
+  {{- end }}
+# tuple "arg1" "arg2" で即時的に配列を作れる。
+  size: |-
+  {{- range tuple "'small'" "medium" "large" }}
+    - {{.}}
+  {{- end}}
+
+

@@ -1,0 +1,11 @@
+favorite:
+  drink: coffee
+  food: pizza
+pizzaToppings:
+  - mushrooms
+  - cheese
+  - peppers
+  - onions
+keyValues:
+  key1: value1
+  key2: value2
